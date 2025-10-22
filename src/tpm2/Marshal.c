@@ -490,6 +490,20 @@ TPMU_HA_Marshal(TPMU_HA *source, BYTE **buffer, INT32 *size, UINT32 selector)
 	written += Array_Marshal(&source->sm3_256[0], SM3_256_DIGEST_SIZE, buffer, size);
 	break;
 #endif
+
+// [GOST] CHANGES START
+#if ALG_GOST3411_256
+      case TPM_ALG_GOST3411_256:
+          written += Array_Marshal(&source->gost3411_256[0], GOST3411_256_DIGEST_SIZE, buffer, size);
+          break;
+#endif
+#if ALG_GOST3411_512
+      case TPM_ALG_GOST3411_512:
+          written += Array_Marshal(&source->gost3411_512[0], GOST3411_512_DIGEST_SIZE, buffer, size);
+          break;
+#endif
+// CHANGES END
+
       case TPM_ALG_NULL:
 	break;
       default:

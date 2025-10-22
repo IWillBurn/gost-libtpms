@@ -837,6 +837,28 @@ PCR_SAVE_Marshal(PCR_SAVE *data, BYTE **buffer, INT32 *size)
     written += Array_Marshal((BYTE *)&data->Sm3_256, array_size,
                              buffer, size);
 #endif
+
+// [GOST] CHANGES START
+#if ALG_GOST3411_256
+    algid = TPM_ALG_GOST3411_256;
+    written += TPM_ALG_ID_Marshal(&algid, buffer, size);
+
+    array_size = sizeof(data->Gost3411_256);
+    written += UINT16_Marshal(&array_size, buffer, size);
+    written += Array_Marshal((BYTE*)&data->Gost3411_256, array_size,
+        buffer, size);
+#endif
+#if ALG_GOST3411_512
+    algid = TPM_ALG_GOST3411_512;
+    written += TPM_ALG_ID_Marshal(&algid, buffer, size);
+
+    array_size = sizeof(data->Gost3411_512);
+    written += UINT16_Marshal(&array_size, buffer, size);
+    written += Array_Marshal((BYTE*)&data->Gost3411_512, array_size,
+        buffer, size);
+#endif
+// CHANGES END
+
 #if ALG_SHA3_256 || ALG_SHA3_384 || ALG_SHA3_512 || ALG_SM3_256
 #error SHA3 and SM3 are not supported
 #endif
@@ -947,6 +969,22 @@ PCR_SAVE_Unmarshal(PCR_SAVE *data, BYTE **buffer, INT32 *size,
                 t = (BYTE *)&data->Sm3_256;
                 break;
 #endif
+
+// [GOST] CHANGES START
+#if ALG_GOST3411_256
+            case TPM_ALG_GOST3411_256:
+                needed_size = sizeof(data->Gost3411_256);
+                t = (BYTE*)&data->Gost3411_256;
+                break;
+#endif
+#if ALG_GOST3411_512
+            case TPM_ALG_GOST3411_512:
+                needed_size = sizeof(data->Gost3411_512);
+                t = (BYTE*)&data->Gost3411_512;
+                break;
+#endif
+// CHANGES END
+
 #if ALG_SHA3_256 || ALG_SHA3_384 || ALG_SHA3_512 || ALG_SM3_256
 #error SHA3 and SM3 are not supported
 #endif
@@ -1058,6 +1096,28 @@ PCR_Marshal(PCR *data, BYTE **buffer, INT32 *size)
     written += Array_Marshal((BYTE *)&data->Sm3_256Pcr, array_size,
                              buffer, size);
 #endif
+
+// [GOST] CHANGES START
+#if ALG_GOST3411_256
+    algid = TPM_ALG_GOST3411_256;
+    written += TPM_ALG_ID_Marshal(&algid, buffer, size);
+
+    array_size = sizeof(data->Gost3411_256Pcr);
+    written += UINT16_Marshal(&array_size, buffer, size);
+    written += Array_Marshal((BYTE*)&data->Gost3411_256Pcr, array_size,
+        buffer, size);
+#endif
+#if ALG_GOST3411_512
+    algid = TPM_ALG_GOST3411_512;
+    written += TPM_ALG_ID_Marshal(&algid, buffer, size);
+
+    array_size = sizeof(data->Gost3411_512Pcr);
+    written += UINT16_Marshal(&array_size, buffer, size);
+    written += Array_Marshal((BYTE*)&data->Gost3411_512Pcr, array_size,
+        buffer, size);
+#endif
+// CHANGES END
+
 #if ALG_SHA3_256 || ALG_SHA3_384 || ALG_SHA3_512 || ALG_SM3_256
 #error SHA3 and SM3 are not supported
 #endif
@@ -1129,6 +1189,22 @@ PCR_Unmarshal(PCR *data, BYTE **buffer, INT32 *size,
                 t = (BYTE *)&data->Sm3_256Pcr;
                 break;
 #endif
+
+// [GOST] CHANGES START
+#if ALG_GOST3411_256
+            case TPM_ALG_GOST3411_256:
+                needed_size = sizeof(data->Gost3411_256Pcr);
+                t = (BYTE*)&data->Gost3411_256Pcr;
+                break;
+#endif
+#if ALG_GOST3411_512
+            case TPM_ALG_GOST3411_512:
+                needed_size = sizeof(data->Gost3411_512Pcr);
+                t = (BYTE*)&data->Gost3411_512Pcr;
+                break;
+#endif
+// CHANGES END
+
 #if ALG_SHA3_256 || ALG_SHA3_384 || ALG_SHA3_512 || ALG_SM3_256
 #error SHA3 and SM3 are not supported
 #endif
@@ -2103,6 +2179,233 @@ skip_future_versions:
 }
 #endif
 
+// [GOST] CHANGES START
+// [GOST TODO] Marshaling/Unmarshaling functions placeholder. A copy of the code for sha256 and sha512. 
+#if ALG_GOST3411_256
+#define HASH_STATE_GOST3411_256_MAGIC 0x6ea059d0
+#define HASH_STATE_GOST3411_256_VERSION 2
+
+static UINT16
+tpmHashStateGOST3411_256_Marshal(tpmHashStateGOST3411_256_t* data, BYTE** buffer, INT32* size)
+{
+    UINT16 written = 0;
+    UINT16 array_size;
+    size_t i;
+    BLOCK_SKIP_INIT;
+
+    written = NV_HEADER_Marshal(buffer, size,
+        HASH_STATE_GOST3411_256_VERSION,
+        HASH_STATE_GOST3411_256_MAGIC, 1);
+
+    array_size = ARRAY_SIZE(data->h);
+    written += UINT16_Marshal(&array_size, buffer, size);
+    for (i = 0; i < array_size; i++) {
+        written += SHA_LONG_Marshal(&data->h[i], buffer, size);
+    }
+    written += SHA_LONG_Marshal(&data->Nl, buffer, size);
+    written += SHA_LONG_Marshal(&data->Nh, buffer, size);
+
+    /* data must be written as array */
+    array_size = sizeof(data->data);
+    written += UINT16_Marshal(&array_size, buffer, size);
+    written += Array_Marshal((BYTE*)&data->data[0], array_size,
+        buffer, size);
+
+    written += UINT32_Marshal(&data->num, buffer, size);
+    written += UINT32_Marshal(&data->md_len, buffer, size);
+
+    written += BLOCK_SKIP_WRITE_PUSH(TRUE, buffer, size);
+    /* future versions append below this line */
+
+    BLOCK_SKIP_WRITE_POP(size);
+
+    BLOCK_SKIP_WRITE_CHECK;
+
+    return written;
+}
+
+static UINT16
+tpmHashStateGOST3411_256_Unmarshal(tpmHashStateGOST3411_256_t* data, BYTE** buffer, INT32* size)
+{
+    UINT16 rc = TPM_RC_SUCCESS;
+    size_t i;
+    UINT16 array_size;
+    NV_HEADER hdr;
+
+    if (rc == TPM_RC_SUCCESS) {
+        rc = NV_HEADER_Unmarshal(&hdr, buffer, size,
+            HASH_STATE_GOST3411_256_VERSION,
+            HASH_STATE_GOST3411_256_MAGIC);
+    }
+
+    if (rc == TPM_RC_SUCCESS) {
+        rc = UINT16_Unmarshal(&array_size, buffer, size);
+    }
+    if (rc == TPM_RC_SUCCESS &&
+        array_size != ARRAY_SIZE(data->h)) {
+        TPMLIB_LogTPM2Error("HASH_STATE_GOST3411_256: Bad array size for h; "
+            "expected %zu, got %u\n",
+            ARRAY_SIZE(data->h), array_size);
+        rc = TPM_RC_BAD_PARAMETER;
+    }
+    for (i = 0; rc == TPM_RC_SUCCESS && i < array_size; i++) {
+        rc = SHA_LONG_Unmarshal(&data->h[i], buffer, size);
+    }
+    if (rc == TPM_RC_SUCCESS) {
+        rc = SHA_LONG_Unmarshal(&data->Nl, buffer, size);
+    }
+    if (rc == TPM_RC_SUCCESS) {
+        rc = SHA_LONG_Unmarshal(&data->Nh, buffer, size);
+    }
+
+    if (rc == TPM_RC_SUCCESS) {
+        rc = UINT16_Unmarshal(&array_size, buffer, size);
+    }
+    if (rc == TPM_RC_SUCCESS &&
+        array_size != sizeof(data->data)) {
+        TPMLIB_LogTPM2Error("HASH_STATE_GOST3411_256: Bad array size for data; "
+            "expected %zu, got %u\n",
+            sizeof(data->data), array_size);
+        rc = TPM_RC_BAD_PARAMETER;
+    }
+    if (rc == TPM_RC_SUCCESS) {
+        rc = Array_Unmarshal((BYTE*)&data->data[0], array_size,
+            buffer, size);
+    }
+    if (rc == TPM_RC_SUCCESS) {
+        rc = UINT32_Unmarshal(&data->num, buffer, size);
+    }
+    if (rc == TPM_RC_SUCCESS) {
+        rc = UINT32_Unmarshal(&data->md_len, buffer, size);
+    }
+
+    /* version 2 starts having indicator for next versions that we can skip;
+       this allows us to downgrade state */
+    if (rc == TPM_RC_SUCCESS && hdr.version >= 2) {
+        BLOCK_SKIP_READ(skip_future_versions, FALSE, buffer, size,
+            "HASH_STATE_GOST3411_256", "version 3 or later");
+        /* future versions nest-append here */
+    }
+
+skip_future_versions:
+
+    return rc;
+}
+#endif
+
+#if ALG_GOST3411_512
+
+#define HASH_STATE_GOST3411_512_MAGIC 0x269e8ae0
+#define HASH_STATE_GOST3411_512_VERSION 2
+
+static UINT16
+tpmHashStateGOST3411_512_Marshal(SHA512_CTX* data, BYTE** buffer, INT32* size)
+{
+    UINT16 written = 0;
+    UINT16 array_size;
+    size_t i;
+    BLOCK_SKIP_INIT;
+    UINT16 version = HASH_STATE_GOST3411_512_VERSION;
+    UINT32 magic = HASH_STATE_GOST3411_512_MAGIC;
+
+    written = NV_HEADER_Marshal(buffer, size,
+        version, magic, 1);
+
+    array_size = ARRAY_SIZE(data->h);
+    written += UINT16_Marshal(&array_size, buffer, size);
+    for (i = 0; i < array_size; i++) {
+        written += SHA_LONG64_Marshal(&data->h[i], buffer, size);
+    }
+    written += SHA_LONG64_Marshal(&data->Nl, buffer, size);
+    written += SHA_LONG64_Marshal(&data->Nh, buffer, size);
+
+    array_size = sizeof(data->u.p);
+    written += UINT16_Marshal(&array_size, buffer, size);
+    written += Array_Marshal(&data->u.p[0], array_size, buffer, size);
+
+    written += UINT32_Marshal(&data->num, buffer, size);
+    written += UINT32_Marshal(&data->md_len, buffer, size);
+
+    written += BLOCK_SKIP_WRITE_PUSH(TRUE, buffer, size);
+    /* future versions append below this line */
+
+    BLOCK_SKIP_WRITE_POP(size);
+
+    BLOCK_SKIP_WRITE_CHECK;
+
+    return written;
+}
+
+static UINT16
+tpmHashStateGOST3411_512_Unmarshal(SHA512_CTX* data, BYTE** buffer, INT32* size)
+{
+    UINT16 rc = TPM_RC_SUCCESS;
+    size_t i;
+    UINT16 array_size;
+    NV_HEADER hdr;
+    UINT16 version = HASH_STATE_GOST3411_512_VERSION;
+    UINT32 magic = HASH_STATE_GOST3411_512_MAGIC;
+
+    if (rc == TPM_RC_SUCCESS) {
+        rc = NV_HEADER_Unmarshal(&hdr, buffer, size,
+            version, magic);
+    }
+
+    if (rc == TPM_RC_SUCCESS) {
+        rc = UINT16_Unmarshal(&array_size, buffer, size);
+    }
+    if (rc == TPM_RC_SUCCESS &&
+        array_size != ARRAY_SIZE(data->h)) {
+        TPMLIB_LogTPM2Error("HASH_STATE_GOST3411_512: Bad array size for h; "
+            "expected %zu, got %u\n",
+            ARRAY_SIZE(data->h), array_size);
+        rc = TPM_RC_BAD_PARAMETER;
+    }
+    for (i = 0; rc == TPM_RC_SUCCESS && i < array_size; i++) {
+        rc = SHA_LONG64_Unmarshal(&data->h[i], buffer, size);
+    }
+    if (rc == TPM_RC_SUCCESS) {
+        rc = SHA_LONG64_Unmarshal(&data->Nl, buffer, size);
+    }
+    if (rc == TPM_RC_SUCCESS) {
+        rc = SHA_LONG64_Unmarshal(&data->Nh, buffer, size);
+    }
+
+    if (rc == TPM_RC_SUCCESS) {
+        rc = UINT16_Unmarshal(&array_size, buffer, size);
+    }
+    if (rc == TPM_RC_SUCCESS &&
+        array_size != sizeof(data->u.p)) {
+        TPMLIB_LogTPM2Error("HASH_STATE_GOST3411_512: Bad array size for u.p; "
+            "expected %zu, got %u\n",
+            sizeof(data->u.p), array_size);
+        rc = TPM_RC_BAD_PARAMETER;
+    }
+    if (rc == TPM_RC_SUCCESS) {
+        rc = Array_Unmarshal(&data->u.p[0], array_size, buffer, size);
+    }
+    if (rc == TPM_RC_SUCCESS) {
+        rc = UINT32_Unmarshal(&data->num, buffer, size);
+    }
+    if (rc == TPM_RC_SUCCESS) {
+        rc = UINT32_Unmarshal(&data->md_len, buffer, size);
+    }
+
+    /* version 2 starts having indicator for next versions that we can skip;
+       this allows us to downgrade state */
+    if (rc == TPM_RC_SUCCESS && hdr.version >= 2) {
+        BLOCK_SKIP_READ(skip_future_versions, FALSE, buffer, size,
+            "HASH_STATE_GOST3411_512", "version 3 or later");
+        /* future versions nest-append here */
+    }
+
+skip_future_versions:
+
+    return rc;
+}
+#endif
+// CHANGES END
+
 #define ANY_HASH_STATE_MAGIC 0x349d494b
 #define ANY_HASH_STATE_VERSION 2
 
@@ -2140,6 +2443,20 @@ ANY_HASH_STATE_Marshal(ANY_HASH_STATE *data, BYTE **buffer, INT32 *size,
                                               ALG_SHA512_VALUE);
         break;
 #endif
+
+// [GOST] CHANGES START
+#if ALG_GOST3411_256
+    case ALG_GOST3411_256_VALUE:
+        written += tpmHashStateGOST3411_256_Marshal(&data->Gost3411_256, buffer, size);
+        break;
+#endif
+#if ALG_GOST3411_512
+    case ALG_GOST3411_512_VALUE:
+        written += tpmHashStateGOST3411_512_Marshal(&data->Gost3411_512, buffer, size);
+        break;
+#endif
+// CHANGES END
+
     default:
         break;
     }
@@ -2190,6 +2507,20 @@ ANY_HASH_STATE_Unmarshal(ANY_HASH_STATE *data, BYTE **buffer, INT32 *size,
                                           ALG_SHA512_VALUE);
         break;
 #endif
+
+// [GOST] CHANGES START
+#if ALG_GOST3411_256
+    case ALG_GOST3411_256_VALUE:
+        rc = tpmHashStateGOST3411_256_Unmarshal(&data->Gost3411_256, buffer, size);
+        break;
+#endif
+#if ALG_GOST3411_512
+    case ALG_GOST3411_512_VALUE:
+        rc = tpmHashStateGOST3411_512_Unmarshal(&data->Gost3411_512, buffer, size);
+        break;
+#endif
+// CHANGES END
+
     }
 
     /* version 2 starts having indicator for next versions that we can skip;
@@ -3870,6 +4201,12 @@ static const struct _entry {
     { COMPILE_CONSTANT(ALG_CBC, EQ) },
     { COMPILE_CONSTANT(ALG_CFB, EQ) },
     { COMPILE_CONSTANT(ALG_ECB, EQ) },
+
+// [GOST] CHANGES START
+    { COMPILE_CONSTANT(ALG_GOST3411_256, EQ) },
+    { COMPILE_CONSTANT(ALG_GOST3411_512, EQ) },
+// CHANGES END
+
     { COMPILE_CONSTANT(3072, LE) }, /* previous: MAX_RSA_KEY_BITS (4096 since StateFormatLevel 8) */
     { COMPILE_CONSTANT(MAX_TDES_KEY_BITS, EQ) },
     { COMPILE_CONSTANT(MAX_AES_KEY_BITS, EQ) },
@@ -4061,7 +4398,7 @@ PACompileConstants_Unmarshal(BYTE **buffer, INT32 *size)
             break;
         case 3:
             /* PA_COMPILE_CONSTANTS_VERSION 3 had 104 entries */
-            exp_array_size = 120;
+            exp_array_size = 122; // [GOST] +2 alg
             break;
         default:
             /* we don't support anything newer - no downgrade */
@@ -4069,7 +4406,7 @@ PACompileConstants_Unmarshal(BYTE **buffer, INT32 *size)
                                 "Supporting up to version %d.\n",
                                 hdr.version, PA_COMPILE_CONSTANTS_VERSION);
             rc = TPM_RC_BAD_VERSION;
-        }
+        } 
     }
 
     if (rc == TPM_RC_SUCCESS) {

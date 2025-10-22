@@ -1333,6 +1333,16 @@ TPMI_ALG_HASH_Unmarshal(TPMI_ALG_HASH *target, BYTE **buffer, INT32 *size, BOOL 
 #if ALG_SM3_256
 	  case TPM_ALG_SM3_256:
 #endif
+
+// [GOST] CHANGES START
+#if ALG_GOST3411_256
+      case TPM_ALG_GOST3411_256:
+#endif
+#if ALG_GOST3411_512
+      case TPM_ALG_GOST3411_512:
+#endif
+// CHANGES ENDED
+
 	    if (!RuntimeAlgorithmCheckEnabled(&g_RuntimeProfile.RuntimeAlgorithm,	// libtpms added begin
 					      *target)) {
 		rc = TPM_RC_HASH;
@@ -1688,6 +1698,16 @@ TPMI_ALG_MAC_SCHEME_Unmarshal(TPMI_ALG_MAC_SCHEME *target, BYTE **buffer, INT32 
 #if ALG_CMAC
 	  case TPM_ALG_CMAC:
 #endif
+
+// [GOST] CHANGES START
+#if ALG_GOST3411_256
+      case TPM_ALG_GOST3411_256:
+#endif
+#if ALG_GOST3411_512
+      case TPM_ALG_GOST3411_512:
+#endif
+// CHANGES END
+
 	    if (!RuntimeAlgorithmCheckEnabled(&g_RuntimeProfile.RuntimeAlgorithm,	// libtpms added begin
 					      *target)) {
 		rc = TPM_RC_SYMMETRIC;
@@ -1807,6 +1827,20 @@ TPMU_HA_Unmarshal(TPMU_HA *target, BYTE **buffer, INT32 *size, UINT32 selector)
 	rc = Array_Unmarshal(target->sm3_256, SM3_256_DIGEST_SIZE, buffer, size);
 	break;
 #endif
+
+// [GOST] CHANGES START
+#if ALG_GOST3411_256
+      case TPM_ALG_GOST3411_256:
+          rc = Array_Unmarshal(target->gost3411_256, GOST3411_256_DIGEST_SIZE, buffer, size);
+          break;
+#endif
+#if ALG_GOST3411_512
+      case TPM_ALG_GOST3411_512:
+          rc = Array_Unmarshal(target->gost3411_512, GOST3411_512_DIGEST_SIZE, buffer, size);
+          break;
+#endif
+// CHANGES END
+
       case TPM_ALG_NULL:
 	break;
       default:

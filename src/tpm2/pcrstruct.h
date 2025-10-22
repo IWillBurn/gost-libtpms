@@ -97,6 +97,16 @@ typedef struct
 #if ALG_SHA3_512
     BYTE Sha3_512[SHA3_512_DIGEST_SIZE];
 #endif
+
+// [GOST] CHANGES START
+#if ALG_GOST3411_256
+    BYTE Gost3411_256Pcr[GOST3411_256_DIGEST_SIZE];
+#endif
+#if ALG_GOST3411_512
+    BYTE Gost3411_512Pcr[GOST3411_512_DIGEST_SIZE];
+#endif
+// CHANGES END
+
 } PCR;
 
 // see the comments below for supportsPolicyAuth to explain this

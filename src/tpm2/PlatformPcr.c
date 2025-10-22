@@ -146,6 +146,22 @@ static const TPM_ALG_ID DefaultActivePcrBanks[] = {
 #  endif
     TPM_ALG_SHA512
 #endif				// libtpms: added end
+
+// [GOST] CHANGES START
+#if ALG_GOST3411_256
+#  if ALG_SHA1 || ALG_SHA256 || ALG_SHA384 || ALG_SHA512
+    ,
+#  endif
+    TPM_ALG_GOST3411_256
+#endif
+#if ALG_GOST3411_512
+#  if ALG_SHA1 || ALG_SHA256 || ALG_SHA384 || ALG_SHA512 || ALG_GOST3411_256
+    ,
+#  endif
+     TPM_ALG_GOST3411_512
+#endif
+// CHANGES END
+
 };
 
 UINT32 _platPcr__NumberOfPcrs()

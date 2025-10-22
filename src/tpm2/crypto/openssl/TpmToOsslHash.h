@@ -104,11 +104,16 @@ int sm3_final(unsigned char* md, SM3_CTX* c);
 // name used by the library.
 // These defines need to be known in all parts of the TPM so that the structure
 // sizes can be properly computed when needed.
-#define tpmHashStateSHA1_t    SHA_CTX
-#define tpmHashStateSHA256_t  SHA256_CTX
-#define tpmHashStateSHA384_t  SHA512_CTX
-#define tpmHashStateSHA512_t  SHA512_CTX
-#define tpmHashStateSM3_256_t SM3_CTX
+#define tpmHashStateSHA1_t          SHA_CTX
+#define tpmHashStateSHA256_t        SHA256_CTX
+#define tpmHashStateSHA384_t        SHA512_CTX
+#define tpmHashStateSHA512_t        SHA512_CTX
+#define tpmHashStateSM3_256_t       SM3_CTX
+
+// [GOST] CHANGES START
+#define tpmHashStateGOST3411_256_t  SHA256_CTX
+#define tpmHashStateGOST3411_512_t  SHA512_CTX
+// CHANGES END
 
 // The defines below are only needed when compiling CryptHash.c or CryptSmac.c.
 // This isolation is primarily to avoid name space collision. However, if there
@@ -183,36 +188,51 @@ typedef const BYTE* PCBYTE;
 
 // Function aliases. The code in CryptHash.c uses the internal designation for the
 // functions. These need to be translated to the function names of the library.
-#  define tpmHashStart_SHA1          SHA1_Init
-#  define tpmHashData_SHA1           SHA1_Update
-#  define tpmHashEnd_SHA1            SHA1_Final
-#  define tpmHashStateCopy_SHA1      memcpy
-#  define tpmHashStateExport_SHA1    memcpy
-#  define tpmHashStateImport_SHA1    memcpy
-#  define tpmHashStart_SHA256        SHA256_Init
-#  define tpmHashData_SHA256         SHA256_Update
-#  define tpmHashEnd_SHA256          SHA256_Final
-#  define tpmHashStateCopy_SHA256    memcpy
-#  define tpmHashStateExport_SHA256  memcpy
-#  define tpmHashStateImport_SHA256  memcpy
-#  define tpmHashStart_SHA384        SHA384_Init
-#  define tpmHashData_SHA384         SHA384_Update
-#  define tpmHashEnd_SHA384          SHA384_Final
-#  define tpmHashStateCopy_SHA384    memcpy
-#  define tpmHashStateExport_SHA384  memcpy
-#  define tpmHashStateImport_SHA384  memcpy
-#  define tpmHashStart_SHA512        SHA512_Init
-#  define tpmHashData_SHA512         SHA512_Update
-#  define tpmHashEnd_SHA512          SHA512_Final
-#  define tpmHashStateCopy_SHA512    memcpy
-#  define tpmHashStateExport_SHA512  memcpy
-#  define tpmHashStateImport_SHA512  memcpy
-#  define tpmHashStart_SM3_256       sm3_init
-#  define tpmHashData_SM3_256        sm3_update
-#  define tpmHashEnd_SM3_256         sm3_final
-#  define tpmHashStateCopy_SM3_256   memcpy
-#  define tpmHashStateExport_SM3_256 memcpy
-#  define tpmHashStateImport_SM3_256 memcpy
+#  define tpmHashStart_SHA1                 SHA1_Init
+#  define tpmHashData_SHA1                  SHA1_Update
+#  define tpmHashEnd_SHA1                   SHA1_Final
+#  define tpmHashStateCopy_SHA1             memcpy
+#  define tpmHashStateExport_SHA1           memcpy
+#  define tpmHashStateImport_SHA1           memcpy
+#  define tpmHashStart_SHA256               SHA256_Init
+#  define tpmHashData_SHA256                SHA256_Update
+#  define tpmHashEnd_SHA256                 SHA256_Final
+#  define tpmHashStateCopy_SHA256           memcpy
+#  define tpmHashStateExport_SHA256         memcpy
+#  define tpmHashStateImport_SHA256         memcpy
+#  define tpmHashStart_SHA384               SHA384_Init
+#  define tpmHashData_SHA384                SHA384_Update
+#  define tpmHashEnd_SHA384                 SHA384_Final
+#  define tpmHashStateCopy_SHA384           memcpy
+#  define tpmHashStateExport_SHA384         memcpy
+#  define tpmHashStateImport_SHA384         memcpy
+#  define tpmHashStart_SHA512               SHA512_Init
+#  define tpmHashData_SHA512                SHA512_Update
+#  define tpmHashEnd_SHA512                 SHA512_Final
+#  define tpmHashStateCopy_SHA512           memcpy
+#  define tpmHashStateExport_SHA512         memcpy
+#  define tpmHashStateImport_SHA512         memcpy
+#  define tpmHashStart_SM3_256              sm3_init
+#  define tpmHashData_SM3_256               sm3_update
+#  define tpmHashEnd_SM3_256                sm3_final
+#  define tpmHashStateCopy_SM3_256          memcpy
+#  define tpmHashStateExport_SM3_256        memcpy
+#  define tpmHashStateImport_SM3_256        memcpy
+
+// [GOST] CHANGES START
+#  define tpmHashStart_GOST3411_256         SHA256_Init
+#  define tpmHashData_GOST3411_256          SHA256_Update
+#  define tpmHashEnd_GOST3411_256           SHA256_Final
+#  define tpmHashStateCopy_GOST3411_256     memcpy
+#  define tpmHashStateExport_GOST3411_256   memcpy
+#  define tpmHashStateImport_GOST3411_256   memcpy
+#  define tpmHashStart_GOST3411_512         SHA512_Init
+#  define tpmHashData_GOST3411_512          SHA512_Update
+#  define tpmHashEnd_GOST3411_512           SHA512_Final
+#  define tpmHashStateCopy_GOST3411_512     memcpy
+#  define tpmHashStateExport_GOST3411_512   memcpy
+#  define tpmHashStateImport_GOST3411_512   memcpy
+// CHANGES END
 
 #endif  // _CRYPT_HASH_C_
 
