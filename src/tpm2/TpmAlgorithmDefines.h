@@ -293,33 +293,48 @@
 #define SHA3_512_DIGEST_SIZE 64
 #define SHA3_512_BLOCK_SIZE  72
 
+// [GOST] CHANGES START
+#define GOST3411_256_DIGEST_SIZE 32
+#define GOST3411_256_BLOCK_SIZE  64
+
+#define GOST3411_512_DIGEST_SIZE 64
+#define GOST3411_512_BLOCK_SIZE  128
+// CHANGES END
+
 // Derived Hash Values
+// [GOST] + ALG_GOST3411_256 + ALG_GOST3411_512
 #define HASH_COUNT                                                                \
     (ALG_SHA1 + ALG_SHA256 + ALG_SHA384 + ALG_SHA512 + ALG_SM3_256 + ALG_SHA3_256 \
-     + ALG_SHA3_384 + ALG_SHA3_512)
+     + ALG_SHA3_384 + ALG_SHA3_512 + ALG_GOST3411_256 + ALG_GOST3411_512)
 
 // Leaving these as MAX-based calculations because (a) they don't slow down the
 // build noticably, and (b) hash block and digest sizes vary, so the #if
 // cascades for these are significantly more error prone to maintain.
-#define MAX_HASH_BLOCK_SIZE                                       \
-    MAX((ALG_SHA3_512 * SHA3_512_BLOCK_SIZE),                     \
-        MAX((ALG_SHA3_384 * SHA3_384_BLOCK_SIZE),                 \
-            MAX((ALG_SHA3_256 * SHA3_256_BLOCK_SIZE),             \
-                MAX((ALG_SM3_256 * SM3_256_BLOCK_SIZE),           \
-                    MAX((ALG_SHA512 * SHA512_BLOCK_SIZE),         \
-                        MAX((ALG_SHA384 * SHA384_BLOCK_SIZE),     \
-                            MAX((ALG_SHA256 * SHA256_BLOCK_SIZE), \
-                                (ALG_SHA1 * SHA1_BLOCK_SIZE))))))))
+// [GOST] + ALG_GOST3411_256 + ALG_GOST3411_512
+#define MAX_HASH_BLOCK_SIZE                                                                     \
+    MAX((ALG_SHA3_512 * SHA3_512_BLOCK_SIZE),                                                   \
+        MAX((ALG_SHA3_384 * SHA3_384_BLOCK_SIZE),                                               \
+            MAX((ALG_SHA3_256 * SHA3_256_BLOCK_SIZE),                                           \
+                MAX((ALG_SM3_256 * SM3_256_BLOCK_SIZE),                                         \
+                    MAX((ALG_SHA512 * SHA512_BLOCK_SIZE),                                       \
+                        MAX((ALG_SHA384 * SHA384_BLOCK_SIZE),                                   \
+                            MAX((ALG_SHA256 * SHA256_BLOCK_SIZE),                               \
+                                MAX((ALG_SHA1 * SHA1_BLOCK_SIZE),                               \
+                                    MAX((ALG_GOST3411_256 * GOST3411_256_BLOCK_SIZE),           \
+                                        (ALG_GOST3411_512 * GOST3411_512_BLOCK_SIZE))))))))))   \
 
-#define MAX_HASH_DIGEST_SIZE                                       \
-    MAX((ALG_SHA3_512 * SHA3_512_DIGEST_SIZE),                     \
-        MAX((ALG_SHA3_384 * SHA3_384_DIGEST_SIZE),                 \
-            MAX((ALG_SHA3_256 * SHA3_256_DIGEST_SIZE),             \
-                MAX((ALG_SM3_256 * SM3_256_DIGEST_SIZE),           \
-                    MAX((ALG_SHA512 * SHA512_DIGEST_SIZE),         \
-                        MAX((ALG_SHA384 * SHA384_DIGEST_SIZE),     \
-                            MAX((ALG_SHA256 * SHA256_DIGEST_SIZE), \
-                                (ALG_SHA1 * SHA1_DIGEST_SIZE))))))))
+// [GOST] + ALG_GOST3411_256 + ALG_GOST3411_512
+#define MAX_HASH_DIGEST_SIZE                                                                    \
+    MAX((ALG_SHA3_512 * SHA3_512_DIGEST_SIZE),                                                  \
+        MAX((ALG_SHA3_384 * SHA3_384_DIGEST_SIZE),                                              \
+            MAX((ALG_SHA3_256 * SHA3_256_DIGEST_SIZE),                                          \
+                MAX((ALG_SM3_256 * SM3_256_DIGEST_SIZE),                                        \
+                    MAX((ALG_SHA512 * SHA512_DIGEST_SIZE),                                      \
+                        MAX((ALG_SHA384 * SHA384_DIGEST_SIZE),                                  \
+                            MAX((ALG_SHA256 * SHA256_DIGEST_SIZE),                              \
+                                MAX((ALG_SHA1 * SHA1_DIGEST_SIZE),                              \
+                                    MAX((ALG_GOST3411_256 * GOST3411_256_DIGEST_SIZE),          \
+                                        (ALG_GOST3411_512 * GOST3411_512_DIGEST_SIZE))))))))))  \
 
 #define MAX_DIGEST_SIZE MAX_HASH_DIGEST_SIZE
 

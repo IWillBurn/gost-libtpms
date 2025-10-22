@@ -166,6 +166,12 @@ static const struct {
     [TPM_ALG_CBC] = ENCRYPTING(ALG_CBC, "cbc", true, 1),
     [TPM_ALG_CFB] = ENCRYPTING(ALG_CFB, "cfb", false, 1), // never disable: context entryption
     [TPM_ALG_ECB] = ENCRYPTING(ALG_ECB, "ecb", true, 1),
+
+	// [GOST] CHANGES START
+	[TPM_ALG_GOST3411_256] = HASH(TPM_ALG_GOST3411_256, "gost3411-256", true, 1),
+	[TPM_ALG_GOST3411_512] = HASH(TPM_ALG_GOST3411_512, "gost3411-512", true, 1),
+	// CHANGES END
+
     /* all newly added algorithms must have .canBedisable=true so they can be disabled */
 };
 

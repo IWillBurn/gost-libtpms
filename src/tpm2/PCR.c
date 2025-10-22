@@ -380,6 +380,18 @@ static BYTE* GetPcrPointerFromPcrArray(PCR*       pPcrArray,
         case TPM_ALG_SHA3_512:
             return pPcrArray[pcrNumber].Sha3_512;
 #endif
+
+// [GOST] CHANGES START
+#if ALG_GOST3411_256
+        case TPM_ALG_GOST3411_256:
+            return pPcrArray[pcrNumber].Gost3411_256Pcr;
+#endif
+#if ALG_GOST3411_512
+        case TPM_ALG_GOST3411_512:
+            return pPcrArray[pcrNumber].Gost3411_512Pcr;
+#endif
+// CHANGES END
+
         default:
             FAIL(FATAL_ERROR_INTERNAL);
             break;

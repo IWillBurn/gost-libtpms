@@ -457,10 +457,26 @@ static const struct hnames {
         .hashAlg  = ALG_SHA512_VALUE,
     }, {
 #endif
+
+// [GOST] CHANGES START
+#if ALG_GOST3411_256
+        .name = "gost3411_256",
+        .hashAlg = ALG_GOST3411_256_VALUE,
+    }, {
+#endif
+#if ALG_GOST3411_512
+        .name = "gost3411_512",
+        .hashAlg = ALG_GOST3411_512_VALUE,
+    }, {
+#endif
+// CHANGES END
+
         .name     = NULL,
     }
 };
-#if HASH_COUNT != ALG_SHA1 + ALG_SHA256 + ALG_SHA384 + ALG_SHA512
+
+// [GOST] + ALG_GOST3411_256 + ALG_GOST3411_512
+#if HASH_COUNT != ALG_SHA1 + ALG_SHA256 + ALG_SHA384 + ALG_SHA512 + ALG_GOST3411_256 + ALG_GOST3411_512
 # error Missing entry in hnames array!
 #endif
 

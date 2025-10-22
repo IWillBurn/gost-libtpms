@@ -114,6 +114,7 @@ static const struct RuntimeProfileDesc {
 #define PROFILE_DEFAULT_V2_IDX	0
 #define PROFILE_DEFAULT_V1_IDX	(PROFILE_DEFAULT_V2_IDX + 1)
 #define PROFILE_NULL_IDX	(PROFILE_DEFAULT_V1_IDX + 1)
+#define PROFILE_GOST_IDX	(PROFILE_NULL_IDX + 1)
     [PROFILE_DEFAULT_V2_IDX] = {
 	 /* do not change this profile */
 	.name = "default-v2",
@@ -169,7 +170,30 @@ static const struct RuntimeProfileDesc {
 		       "created by libtpms v0.9 or before. This profile enables compatibility "
 		       "with libtpms >= v0.9.",
 	.allowModifications = false,
-    }, {
+    },
+
+    // [GOST] CHANGES START
+    [PROFILE_GOST_IDX] = {
+	.name = "custom:gost",
+    .prefix = "custom:",
+    .prefix_len = 7,
+	.commandsProfile   = defaultCommandsProfile,
+	.algorithmsProfile = "rsa,rsa-min-size=1024,tdes,tdes-min-size=128,sha1,hmac,"
+			     "aes,aes-min-size=128,mgf1,keyedhash,xor,sha256,sha384,sha512,"
+			     "null,rsassa,rsaes,rsapss,oaep,ecdsa,ecdh,ecdaa,sm2,ecschnorr,ecmqv,"
+			     "kdf1-sp800-56a,kdf2,kdf1-sp800-108,ecc,ecc-min-size=192,ecc-nist,"
+			     "ecc-bn,ecc-sm2-p256,symcipher,camellia,camellia-min-size=128,cmac,"
+			     "ctr,ofb,cbc,cfb,ecb,gost3411-256,gost3411-512",
+	.stateFormatLevel  = 7,
+	.description = "The profile enables the commands and algorithms that were "
+		       "enabled in libtpms v0.9 and gost algorithms."
+               "This profile enables compatibility "
+		       "with libtpms >= v0.9.",
+	.allowModifications = false,
+    },
+    // CHANGES END
+    
+    {
 	.name = "custom",
 	.prefix = "custom:",
 	.prefix_len = 7,

@@ -205,10 +205,18 @@ typedef UINT16 TPM_ALG_ID;
 #define TPM_ALG_LMS              (TPM_ALG_ID)(ALG_LMS_VALUE)
 #define ALG_XMSS_VALUE           0x0071
 #define TPM_ALG_XMSS             (TPM_ALG_ID)(ALG_XMSS_VALUE)
+
+// [GOST] CHANGES START
+#define ALG_GOST3411_256_VALUE   0x0100
+#define TPM_ALG_GOST3411_256     (TPM_ALG_ID)(ALG_GOST3411_256_VALUE)
+#define ALG_GOST3411_512_VALUE   0x0101
+#define TPM_ALG_GOST3411_512     (TPM_ALG_ID)(ALG_GOST3411_512_VALUE)
+// CHANGES END
+
 //        Values derived from Table "Definition of TPM_ALG_ID Constants" (Part 2: Structures)
 #define ALG_FIRST_VALUE 0x0001
 #define TPM_ALG_FIRST   (TPM_ALG_ID)(ALG_FIRST_VALUE)
-#define ALG_LAST_VALUE  0x0071
+#define ALG_LAST_VALUE  0x0101 // [GOST] 0x0071 -> 0x0101
 #define TPM_ALG_LAST    (TPM_ALG_ID)(ALG_LAST_VALUE)
 
 // Table "Definition of TPM_ECC_CURVE Constants" (Part 2: Structures)
@@ -1673,6 +1681,16 @@ typedef union
 #if ALG_SM3_256
     BYTE sm3_256[SM3_256_DIGEST_SIZE];
 #endif  // ALG_SM3_256
+
+// [GOST] CHANGES START
+#if ALG_GOST3411_256
+    BYTE gost3411_256[GOST3411_256_DIGEST_SIZE];
+#endif  // ALG_GOST3411_256
+#if ALG_GOST3411_512
+    BYTE gost3411_512[GOST3411_512_DIGEST_SIZE];
+#endif  // ALG_GOST3411_512
+// CHANGES END
+
 } TPMU_HA;
 
 typedef struct

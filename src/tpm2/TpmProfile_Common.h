@@ -215,6 +215,11 @@
 #define ALG_SHA384                          ALG_YES
 #define ALG_SHA512                          ALG_YES
 
+// [GOST] CHANGES START
+#define ALG_GOST3411_256                    ALG_YES
+#define ALG_GOST3411_512                    ALG_YES
+// CHANGES END
+
 #define ALG_SHA3_256                        ALG_NO
 #define ALG_SHA3_384                        ALG_NO
 #define ALG_SHA3_512                        ALG_NO
