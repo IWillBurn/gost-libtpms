@@ -2182,112 +2182,143 @@ skip_future_versions:
 // [GOST] CHANGES START
 // [GOST TODO] Marshaling/Unmarshaling functions placeholder. A copy of the code for sha256 and sha512. 
 #if ALG_GOST3411_256
-#define HASH_STATE_GOST3411_256_MAGIC 0x6ea059d0
-#define HASH_STATE_GOST3411_256_VERSION 2
+#define HASH_STATE_GOST3411_256_MAGIC 0xa8d9a68c // the first 4 bytes of the hash of the string "GOST3411_256" in MD5
+#define HASH_STATE_GOST3411_256_VERSION 1 
 
 static UINT16
-tpmHashStateGOST3411_256_Marshal(tpmHashStateGOST3411_256_t* data, BYTE** buffer, INT32* size)
+tpmHashStateGOST3411_256_Marshal(tpmHashStateGOST3411_256_t *data, BYTE **buffer, INT32 *size)
 {
     UINT16 written = 0;
     UINT16 array_size;
-    size_t i;
+    UINT64 bufsize_temp;
     BLOCK_SKIP_INIT;
 
     written = NV_HEADER_Marshal(buffer, size,
-        HASH_STATE_GOST3411_256_VERSION,
-        HASH_STATE_GOST3411_256_MAGIC, 1);
+                                HASH_STATE_GOST3411_256_VERSION,
+                                HASH_STATE_GOST3411_256_MAGIC, 1);
 
-    array_size = ARRAY_SIZE(data->h);
+    /* Marshal buffer union (64 bytes) */
+    array_size = sizeof(data->buffer);
     written += UINT16_Marshal(&array_size, buffer, size);
-    for (i = 0; i < array_size; i++) {
-        written += SHA_LONG_Marshal(&data->h[i], buffer, size);
-    }
-    written += SHA_LONG_Marshal(&data->Nl, buffer, size);
-    written += SHA_LONG_Marshal(&data->Nh, buffer, size);
+    written += Array_Marshal((BYTE *)&data->buffer, array_size,
+                             buffer, size);
 
-    /* data must be written as array */
-    array_size = sizeof(data->data);
+    /* Marshal h union (64 bytes) */
+    array_size = sizeof(data->h);
     written += UINT16_Marshal(&array_size, buffer, size);
-    written += Array_Marshal((BYTE*)&data->data[0], array_size,
-        buffer, size);
+    written += Array_Marshal((BYTE *)&data->h, array_size,
+                             buffer, size);
 
-    written += UINT32_Marshal(&data->num, buffer, size);
-    written += UINT32_Marshal(&data->md_len, buffer, size);
+    /* Marshal N union (64 bytes) */
+    array_size = sizeof(data->N);
+    written += UINT16_Marshal(&array_size, buffer, size);
+    written += Array_Marshal((BYTE *)&data->N, array_size,
+                             buffer, size);
 
-    written += BLOCK_SKIP_WRITE_PUSH(TRUE, buffer, size);
-    /* future versions append below this line */
+    /* Marshal Sigma union (64 bytes) */
+    array_size = sizeof(data->Sigma);
+    written += UINT16_Marshal(&array_size, buffer, size);
+    written += Array_Marshal((BYTE *)&data->Sigma, array_size,
+                             buffer, size);
 
-    BLOCK_SKIP_WRITE_POP(size);
+    /* Marshal bufsize (size_t) as UINT64 */
+    bufsize_temp = (UINT64)data->bufsize;
+    written += UINT64_Marshal(&bufsize_temp, buffer, size);
 
-    BLOCK_SKIP_WRITE_CHECK;
+    written += UINT32_Marshal(&data->digest_size, buffer, size);
 
     return written;
 }
 
 static UINT16
-tpmHashStateGOST3411_256_Unmarshal(tpmHashStateGOST3411_256_t* data, BYTE** buffer, INT32* size)
+tpmHashStateGOST3411_256_Unmarshal(tpmHashStateGOST3411_256_t *data, BYTE **buffer, INT32 *size)
 {
     UINT16 rc = TPM_RC_SUCCESS;
-    size_t i;
     UINT16 array_size;
+    UINT64 bufsize_temp;
     NV_HEADER hdr;
 
     if (rc == TPM_RC_SUCCESS) {
         rc = NV_HEADER_Unmarshal(&hdr, buffer, size,
-            HASH_STATE_GOST3411_256_VERSION,
-            HASH_STATE_GOST3411_256_MAGIC);
+                                 HASH_STATE_GOST3411_256_VERSION,
+                                 HASH_STATE_GOST3411_256_MAGIC);
     }
 
+    /* Unmarshal buffer union */
     if (rc == TPM_RC_SUCCESS) {
         rc = UINT16_Unmarshal(&array_size, buffer, size);
     }
     if (rc == TPM_RC_SUCCESS &&
-        array_size != ARRAY_SIZE(data->h)) {
+        array_size != sizeof(data->buffer)) {
+        TPMLIB_LogTPM2Error("HASH_STATE_GOST3411_256: Bad array size for buffer; "
+                            "expected %zu, got %u\n",
+                            sizeof(data->buffer), array_size);
+        rc = TPM_RC_BAD_PARAMETER;
+    }
+    if (rc == TPM_RC_SUCCESS) {
+        rc = Array_Unmarshal((BYTE *)&data->buffer, array_size,
+                             buffer, size);
+    }
+
+    /* Unmarshal h union */
+    if (rc == TPM_RC_SUCCESS) {
+        rc = UINT16_Unmarshal(&array_size, buffer, size);
+    }
+    if (rc == TPM_RC_SUCCESS &&
+        array_size != sizeof(data->h)) {
         TPMLIB_LogTPM2Error("HASH_STATE_GOST3411_256: Bad array size for h; "
-            "expected %zu, got %u\n",
-            ARRAY_SIZE(data->h), array_size);
+                            "expected %zu, got %u\n",
+                            sizeof(data->h), array_size);
         rc = TPM_RC_BAD_PARAMETER;
     }
-    for (i = 0; rc == TPM_RC_SUCCESS && i < array_size; i++) {
-        rc = SHA_LONG_Unmarshal(&data->h[i], buffer, size);
-    }
     if (rc == TPM_RC_SUCCESS) {
-        rc = SHA_LONG_Unmarshal(&data->Nl, buffer, size);
-    }
-    if (rc == TPM_RC_SUCCESS) {
-        rc = SHA_LONG_Unmarshal(&data->Nh, buffer, size);
+        rc = Array_Unmarshal((BYTE *)&data->h, array_size,
+                             buffer, size);
     }
 
+    /* Unmarshal N union */
     if (rc == TPM_RC_SUCCESS) {
         rc = UINT16_Unmarshal(&array_size, buffer, size);
     }
     if (rc == TPM_RC_SUCCESS &&
-        array_size != sizeof(data->data)) {
-        TPMLIB_LogTPM2Error("HASH_STATE_GOST3411_256: Bad array size for data; "
-            "expected %zu, got %u\n",
-            sizeof(data->data), array_size);
+        array_size != sizeof(data->N)) {
+        TPMLIB_LogTPM2Error("HASH_STATE_GOST3411_256: Bad array size for N; "
+                            "expected %zu, got %u\n",
+                            sizeof(data->N), array_size);
         rc = TPM_RC_BAD_PARAMETER;
     }
     if (rc == TPM_RC_SUCCESS) {
-        rc = Array_Unmarshal((BYTE*)&data->data[0], array_size,
-            buffer, size);
-    }
-    if (rc == TPM_RC_SUCCESS) {
-        rc = UINT32_Unmarshal(&data->num, buffer, size);
-    }
-    if (rc == TPM_RC_SUCCESS) {
-        rc = UINT32_Unmarshal(&data->md_len, buffer, size);
+        rc = Array_Unmarshal((BYTE *)&data->N, array_size,
+                             buffer, size);
     }
 
-    /* version 2 starts having indicator for next versions that we can skip;
-       this allows us to downgrade state */
-    if (rc == TPM_RC_SUCCESS && hdr.version >= 2) {
-        BLOCK_SKIP_READ(skip_future_versions, FALSE, buffer, size,
-            "HASH_STATE_GOST3411_256", "version 3 or later");
-        /* future versions nest-append here */
+    /* Unmarshal Sigma union */
+    if (rc == TPM_RC_SUCCESS) {
+        rc = UINT16_Unmarshal(&array_size, buffer, size);
+    }
+    if (rc == TPM_RC_SUCCESS &&
+        array_size != sizeof(data->Sigma)) {
+        TPMLIB_LogTPM2Error("HASH_STATE_GOST3411_256: Bad array size for Sigma; "
+                            "expected %zu, got %u\n",
+                            sizeof(data->Sigma), array_size);
+        rc = TPM_RC_BAD_PARAMETER;
+    }
+    if (rc == TPM_RC_SUCCESS) {
+        rc = Array_Unmarshal((BYTE *)&data->Sigma, array_size,
+                             buffer, size);
     }
 
-skip_future_versions:
+    /* Unmarshal bufsize (size_t) from UINT64 */
+    if (rc == TPM_RC_SUCCESS) {
+        rc = UINT64_Unmarshal(&bufsize_temp, buffer, size);
+    }
+    if (rc == TPM_RC_SUCCESS) {
+        data->bufsize = (size_t)bufsize_temp;
+    }
+
+    if (rc == TPM_RC_SUCCESS) {
+        rc = UINT32_Unmarshal(&data->digest_size, buffer, size);
+    }
 
     return rc;
 }
@@ -2295,111 +2326,143 @@ skip_future_versions:
 
 #if ALG_GOST3411_512
 
-#define HASH_STATE_GOST3411_512_MAGIC 0x269e8ae0
-#define HASH_STATE_GOST3411_512_VERSION 2
+#define HASH_STATE_GOST3411_512_MAGIC 0x688b6231 // the first 4 bytes of the hash of the string "GOST3411_512" in MD5
+#define HASH_STATE_GOST3411_512_VERSION 1
 
 static UINT16
-tpmHashStateGOST3411_512_Marshal(SHA512_CTX* data, BYTE** buffer, INT32* size)
+tpmHashStateGOST3411_512_Marshal(tpmHashStateGOST3411_512_t *data, BYTE **buffer, INT32 *size)
 {
     UINT16 written = 0;
     UINT16 array_size;
-    size_t i;
+    UINT64 bufsize_temp;
     BLOCK_SKIP_INIT;
-    UINT16 version = HASH_STATE_GOST3411_512_VERSION;
-    UINT32 magic = HASH_STATE_GOST3411_512_MAGIC;
 
     written = NV_HEADER_Marshal(buffer, size,
-        version, magic, 1);
+                                HASH_STATE_GOST3411_512_VERSION,
+                                HASH_STATE_GOST3411_512_MAGIC, 1);
 
-    array_size = ARRAY_SIZE(data->h);
+    /* Marshal buffer union (64 bytes) */
+    array_size = sizeof(data->buffer);
     written += UINT16_Marshal(&array_size, buffer, size);
-    for (i = 0; i < array_size; i++) {
-        written += SHA_LONG64_Marshal(&data->h[i], buffer, size);
-    }
-    written += SHA_LONG64_Marshal(&data->Nl, buffer, size);
-    written += SHA_LONG64_Marshal(&data->Nh, buffer, size);
+    written += Array_Marshal((BYTE *)&data->buffer, array_size,
+                             buffer, size);
 
-    array_size = sizeof(data->u.p);
+    /* Marshal h union (64 bytes) */
+    array_size = sizeof(data->h);
     written += UINT16_Marshal(&array_size, buffer, size);
-    written += Array_Marshal(&data->u.p[0], array_size, buffer, size);
+    written += Array_Marshal((BYTE *)&data->h, array_size,
+                             buffer, size);
 
-    written += UINT32_Marshal(&data->num, buffer, size);
-    written += UINT32_Marshal(&data->md_len, buffer, size);
+    /* Marshal N union (64 bytes) */
+    array_size = sizeof(data->N);
+    written += UINT16_Marshal(&array_size, buffer, size);
+    written += Array_Marshal((BYTE *)&data->N, array_size,
+                             buffer, size);
 
-    written += BLOCK_SKIP_WRITE_PUSH(TRUE, buffer, size);
-    /* future versions append below this line */
+    /* Marshal Sigma union (64 bytes) */
+    array_size = sizeof(data->Sigma);
+    written += UINT16_Marshal(&array_size, buffer, size);
+    written += Array_Marshal((BYTE *)&data->Sigma, array_size,
+                             buffer, size);
 
-    BLOCK_SKIP_WRITE_POP(size);
+    /* Marshal bufsize (size_t) as UINT64 for platform independence */
+    bufsize_temp = (UINT64)data->bufsize;
+    written += UINT64_Marshal(&bufsize_temp, buffer, size);
 
-    BLOCK_SKIP_WRITE_CHECK;
+    written += UINT32_Marshal(&data->digest_size, buffer, size);
 
     return written;
 }
 
 static UINT16
-tpmHashStateGOST3411_512_Unmarshal(SHA512_CTX* data, BYTE** buffer, INT32* size)
+tpmHashStateGOST3411_512_Unmarshal(tpmHashStateGOST3411_512_t *data, BYTE **buffer, INT32 *size)
 {
     UINT16 rc = TPM_RC_SUCCESS;
-    size_t i;
     UINT16 array_size;
+    UINT64 bufsize_temp;
     NV_HEADER hdr;
-    UINT16 version = HASH_STATE_GOST3411_512_VERSION;
-    UINT32 magic = HASH_STATE_GOST3411_512_MAGIC;
 
     if (rc == TPM_RC_SUCCESS) {
         rc = NV_HEADER_Unmarshal(&hdr, buffer, size,
-            version, magic);
+                                 HASH_STATE_GOST3411_512_VERSION,
+                                 HASH_STATE_GOST3411_512_MAGIC);
     }
 
+    /* Unmarshal buffer union */
     if (rc == TPM_RC_SUCCESS) {
         rc = UINT16_Unmarshal(&array_size, buffer, size);
     }
     if (rc == TPM_RC_SUCCESS &&
-        array_size != ARRAY_SIZE(data->h)) {
+        array_size != sizeof(data->buffer)) {
+        TPMLIB_LogTPM2Error("HASH_STATE_GOST3411_512: Bad array size for buffer; "
+                            "expected %zu, got %u\n",
+                            sizeof(data->buffer), array_size);
+        rc = TPM_RC_BAD_PARAMETER;
+    }
+    if (rc == TPM_RC_SUCCESS) {
+        rc = Array_Unmarshal((BYTE *)&data->buffer, array_size,
+                             buffer, size);
+    }
+
+    /* Unmarshal h union */
+    if (rc == TPM_RC_SUCCESS) {
+        rc = UINT16_Unmarshal(&array_size, buffer, size);
+    }
+    if (rc == TPM_RC_SUCCESS &&
+        array_size != sizeof(data->h)) {
         TPMLIB_LogTPM2Error("HASH_STATE_GOST3411_512: Bad array size for h; "
-            "expected %zu, got %u\n",
-            ARRAY_SIZE(data->h), array_size);
+                            "expected %zu, got %u\n",
+                            sizeof(data->h), array_size);
         rc = TPM_RC_BAD_PARAMETER;
     }
-    for (i = 0; rc == TPM_RC_SUCCESS && i < array_size; i++) {
-        rc = SHA_LONG64_Unmarshal(&data->h[i], buffer, size);
-    }
     if (rc == TPM_RC_SUCCESS) {
-        rc = SHA_LONG64_Unmarshal(&data->Nl, buffer, size);
-    }
-    if (rc == TPM_RC_SUCCESS) {
-        rc = SHA_LONG64_Unmarshal(&data->Nh, buffer, size);
+        rc = Array_Unmarshal((BYTE *)&data->h, array_size,
+                             buffer, size);
     }
 
+    /* Unmarshal N union */
     if (rc == TPM_RC_SUCCESS) {
         rc = UINT16_Unmarshal(&array_size, buffer, size);
     }
     if (rc == TPM_RC_SUCCESS &&
-        array_size != sizeof(data->u.p)) {
-        TPMLIB_LogTPM2Error("HASH_STATE_GOST3411_512: Bad array size for u.p; "
-            "expected %zu, got %u\n",
-            sizeof(data->u.p), array_size);
+        array_size != sizeof(data->N)) {
+        TPMLIB_LogTPM2Error("HASH_STATE_GOST3411_512: Bad array size for N; "
+                            "expected %zu, got %u\n",
+                            sizeof(data->N), array_size);
         rc = TPM_RC_BAD_PARAMETER;
     }
     if (rc == TPM_RC_SUCCESS) {
-        rc = Array_Unmarshal(&data->u.p[0], array_size, buffer, size);
-    }
-    if (rc == TPM_RC_SUCCESS) {
-        rc = UINT32_Unmarshal(&data->num, buffer, size);
-    }
-    if (rc == TPM_RC_SUCCESS) {
-        rc = UINT32_Unmarshal(&data->md_len, buffer, size);
+        rc = Array_Unmarshal((BYTE *)&data->N, array_size,
+                             buffer, size);
     }
 
-    /* version 2 starts having indicator for next versions that we can skip;
-       this allows us to downgrade state */
-    if (rc == TPM_RC_SUCCESS && hdr.version >= 2) {
-        BLOCK_SKIP_READ(skip_future_versions, FALSE, buffer, size,
-            "HASH_STATE_GOST3411_512", "version 3 or later");
-        /* future versions nest-append here */
+    /* Unmarshal Sigma union */
+    if (rc == TPM_RC_SUCCESS) {
+        rc = UINT16_Unmarshal(&array_size, buffer, size);
+    }
+    if (rc == TPM_RC_SUCCESS &&
+        array_size != sizeof(data->Sigma)) {
+        TPMLIB_LogTPM2Error("HASH_STATE_GOST3411_512: Bad array size for Sigma; "
+                            "expected %zu, got %u\n",
+                            sizeof(data->Sigma), array_size);
+        rc = TPM_RC_BAD_PARAMETER;
+    }
+    if (rc == TPM_RC_SUCCESS) {
+        rc = Array_Unmarshal((BYTE *)&data->Sigma, array_size,
+                             buffer, size);
     }
 
-skip_future_versions:
+    /* Unmarshal bufsize (size_t) from UINT64 */
+    if (rc == TPM_RC_SUCCESS) {
+        rc = UINT64_Unmarshal(&bufsize_temp, buffer, size);
+    }
+    if (rc == TPM_RC_SUCCESS) {
+        data->bufsize = (size_t)bufsize_temp;
+    }
+
+    if (rc == TPM_RC_SUCCESS) {
+        rc = UINT32_Unmarshal(&data->digest_size, buffer, size);
+    }
 
     return rc;
 }

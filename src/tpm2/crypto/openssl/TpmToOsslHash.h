@@ -69,6 +69,7 @@
 
 #include <openssl/evp.h>
 #include <openssl/sha.h>
+#include <gost-engine/gosthash2012.h>
 
 #if ALG_SM3_256
 #  if defined(OPENSSL_NO_SM3) || OPENSSL_VERSION_NUMBER < 0x10101010L
@@ -104,15 +105,41 @@ int sm3_final(unsigned char* md, SM3_CTX* c);
 // name used by the library.
 // These defines need to be known in all parts of the TPM so that the structure
 // sizes can be properly computed when needed.
-#define tpmHashStateSHA1_t          SHA_CTX
-#define tpmHashStateSHA256_t        SHA256_CTX
-#define tpmHashStateSHA384_t        SHA512_CTX
-#define tpmHashStateSHA512_t        SHA512_CTX
-#define tpmHashStateSM3_256_t       SM3_CTX
+#define tpmHashStateSHA1_t                SHA_CTX
+#define tpmHashStateSHA256_t              SHA256_CTX
+#define tpmHashStateSHA384_t              SHA512_CTX
+#define tpmHashStateSHA512_t              SHA512_CTX
+#define tpmHashStateSM3_256_t             SM3_CTX
 
 // [GOST] CHANGES START
-#define tpmHashStateGOST3411_256_t  SHA256_CTX
-#define tpmHashStateGOST3411_512_t  SHA512_CTX
+#define tpmHashStateGOST3411_256_t        gost2012_hash_ctx
+#define tpmHashStateGOST3411_512_t        gost2012_hash_ctx
+// CHANGES END
+
+// [GOST] CHANGES START
+static inline void GOST3411_256_INIT(gost2012_hash_ctx * CTX) {
+      init_gost2012_hash_ctx(CTX, 256);
+}
+static inline void GOST3411_256_UPDATE(gost2012_hash_ctx * CTX,
+                                       const unsigned char *data,
+                                       size_t len) {
+      gost2012_hash_block(CTX, data, len);
+}
+static inline void GOST3411_256_FINAL(unsigned char *digest, gost2012_hash_ctx *CTX) {
+      gost2012_finish_hash(CTX, digest);
+}
+
+static inline void GOST3411_512_INIT(gost2012_hash_ctx * CTX) {
+      init_gost2012_hash_ctx(CTX, 512);
+}
+static inline void GOST3411_512_UPDATE(gost2012_hash_ctx * CTX,
+                                       const unsigned char *data,
+                                       size_t len) {
+      gost2012_hash_block(CTX, data, len);
+}
+static inline void GOST3411_512_FINAL(unsigned char *digest, gost2012_hash_ctx *CTX) {
+      gost2012_finish_hash(CTX, digest);
+}
 // CHANGES END
 
 // The defines below are only needed when compiling CryptHash.c or CryptSmac.c.
@@ -220,15 +247,15 @@ typedef const BYTE* PCBYTE;
 #  define tpmHashStateImport_SM3_256        memcpy
 
 // [GOST] CHANGES START
-#  define tpmHashStart_GOST3411_256         SHA256_Init
-#  define tpmHashData_GOST3411_256          SHA256_Update
-#  define tpmHashEnd_GOST3411_256           SHA256_Final
+#  define tpmHashStart_GOST3411_256         GOST3411_256_INIT
+#  define tpmHashData_GOST3411_256          GOST3411_256_UPDATE
+#  define tpmHashEnd_GOST3411_256           GOST3411_256_FINAL
 #  define tpmHashStateCopy_GOST3411_256     memcpy
 #  define tpmHashStateExport_GOST3411_256   memcpy
 #  define tpmHashStateImport_GOST3411_256   memcpy
-#  define tpmHashStart_GOST3411_512         SHA512_Init
-#  define tpmHashData_GOST3411_512          SHA512_Update
-#  define tpmHashEnd_GOST3411_512           SHA512_Final
+#  define tpmHashStart_GOST3411_512         GOST3411_512_INIT
+#  define tpmHashData_GOST3411_512          GOST3411_512_UPDATE
+#  define tpmHashEnd_GOST3411_512           GOST3411_512_FINAL
 #  define tpmHashStateCopy_GOST3411_512     memcpy
 #  define tpmHashStateExport_GOST3411_512   memcpy
 #  define tpmHashStateImport_GOST3411_512   memcpy

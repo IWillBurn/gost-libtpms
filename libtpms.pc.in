@@ -10,5 +10,5 @@ with_tpm2=@WITH_TPM2@
 Name: libtpms
 Version: @VERSION@
 Description: libtpms
-Libs: -L${libdir} -ltpms
+Libs: -L${libdir} -ltpms -lgost
 Cflags: -I${includedir}
