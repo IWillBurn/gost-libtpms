@@ -1391,6 +1391,16 @@ TPMI_ALG_SYM_Unmarshal(TPMI_ALG_SYM *target, BYTE **buffer, INT32 *size, BOOL al
 #if ALG_XOR
 	  case TPM_ALG_XOR:
 #endif
+
+// [GOST] CHANGES START
+#if ALG_MAGMA
+	  case TPM_ALG_MAGMA:
+#endif
+#if ALG_GRASSHOPPER
+	  case TPM_ALG_GRASSHOPPER:
+#endif
+// CHANGES END
+
 	    if (!RuntimeAlgorithmCheckEnabled(&g_RuntimeProfile.RuntimeAlgorithm,	// libtpms added begin
 					      *target)) {
 		rc = TPM_RC_SYMMETRIC;
@@ -1436,6 +1446,16 @@ TPMI_ALG_SYM_OBJECT_Unmarshal(TPMI_ALG_SYM_OBJECT *target, BYTE **buffer, INT32 
 #if ALG_TDES		// libtpms added begin
 	  case TPM_ALG_TDES:
 #endif			// iibtpms added end
+
+// [GOST] CHANGES START
+#if ALG_MAGMA
+	  case TPM_ALG_MAGMA:
+#endif
+#if ALG_GRASSHOPPER
+	  case TPM_ALG_GRASSHOPPER:
+#endif
+// CHANGES END
+
 	    if (!RuntimeAlgorithmCheckEnabled(&g_RuntimeProfile.RuntimeAlgorithm,	// libtpms added begin
 					      *target)) {
 		rc = TPM_RC_SYMMETRIC;
@@ -3049,6 +3069,76 @@ TPMI_TDES_KEY_BITS_Unmarshal(TPMI_SM4_KEY_BITS *target, BYTE **buffer, INT32 *si
 }
 #endif			// libtpms added end
 
+// [GOST] CHANGES START
+#if ALG_MAGMA
+TPM_RC
+TPMI_MAGMA_KEY_BITS_Unmarshal(TPMI_MAGMA_KEY_BITS *target, BYTE **buffer, INT32 *size)
+{
+    TPM_RC rc = TPM_RC_SUCCESS;
+    TPMI_MAGMA_KEY_BITS orig_target = *target;
+
+    if (rc == TPM_RC_SUCCESS) {
+	rc = TPM_KEY_BITS_Unmarshal(target, buffer, size);
+    }
+    if (rc == TPM_RC_SUCCESS) {
+	switch (*target) {
+#if MAGMA_256
+	  case 256:
+#endif
+	    if (!RuntimeAlgorithmKeySizeCheckEnabled(&g_RuntimeProfile.RuntimeAlgorithm,
+						     TPM_ALG_MAGMA,
+						     *target,
+						     TPM_ECC_NONE,
+						     g_RuntimeProfile.stateFormatLevel)) {
+		rc = TPM_RC_VALUE;
+	    }
+	    break;
+	  default:
+	    rc = TPM_RC_VALUE;
+	}
+    }
+    if (rc != TPM_RC_SUCCESS) {
+	*target = orig_target;
+    }
+    return rc;
+}
+#endif
+
+#if ALG_GRASSHOPPER
+TPM_RC
+TPMI_GRASSHOPPER_KEY_BITS_Unmarshal(TPMI_GRASSHOPPER_KEY_BITS *target, BYTE **buffer, INT32 *size)
+{
+    TPM_RC rc = TPM_RC_SUCCESS;
+    TPMI_GRASSHOPPER_KEY_BITS orig_target = *target;
+
+    if (rc == TPM_RC_SUCCESS) {
+	rc = TPM_KEY_BITS_Unmarshal(target, buffer, size);
+    }
+    if (rc == TPM_RC_SUCCESS) {
+	switch (*target) {
+#if GRASSHOPPER_256
+	  case 256:
+#endif
+	    if (!RuntimeAlgorithmKeySizeCheckEnabled(&g_RuntimeProfile.RuntimeAlgorithm,
+						     TPM_ALG_GRASSHOPPER,
+						     *target,
+						     TPM_ECC_NONE,
+						     g_RuntimeProfile.stateFormatLevel)) {
+		rc = TPM_RC_VALUE;
+	    }
+	    break;
+	  default:
+	    rc = TPM_RC_VALUE;
+	}
+    }
+    if (rc != TPM_RC_SUCCESS) {
+	*target = orig_target;
+    }
+    return rc;
+}
+#endif
+// CHANGES END
+
 /* Table 125 - Definition of TPMU_SYM_KEY_BITS Union */
 
 TPM_RC
@@ -3083,6 +3173,20 @@ TPMU_SYM_KEY_BITS_Unmarshal(TPMU_SYM_KEY_BITS *target, BYTE **buffer, INT32 *siz
 	rc = TPMI_TDES_KEY_BITS_Unmarshal(&target->tdes, buffer, size);
 	break;
 #endif			// libtpms added end
+
+// [GOST] CHANGES START
+#if ALG_MAGMA
+      case TPM_ALG_MAGMA:
+	rc = TPMI_MAGMA_KEY_BITS_Unmarshal(&target->magma, buffer, size);
+	break;
+#endif
+#if ALG_GRASSHOPPER
+      case TPM_ALG_GRASSHOPPER:
+	rc = TPMI_GRASSHOPPER_KEY_BITS_Unmarshal(&target->grasshopper, buffer, size);
+	break;
+#endif
+// [GOST] CHANGES END
+
 #if ALG_XOR
       case TPM_ALG_XOR:
 	rc = TPMI_ALG_HASH_Unmarshal(&target->xor, buffer, size, NO);
@@ -3130,6 +3234,20 @@ TPMU_SYM_MODE_Unmarshal(TPMU_SYM_MODE *target, BYTE **buffer, INT32 *size, UINT3
 	rc = TPMI_ALG_SYM_MODE_Unmarshal(&target->tdes, buffer, size, YES);
 	break;
 #endif			// libtpms added end
+
+// [GOST] CHANGES START
+#if ALG_MAGMA
+      case TPM_ALG_MAGMA:
+	rc = TPMI_ALG_SYM_MODE_Unmarshal(&target->magma, buffer, size, YES);
+	break;
+#endif
+#if ALG_GRASSHOPPER
+      case TPM_ALG_GRASSHOPPER:
+	rc = TPMI_ALG_SYM_MODE_Unmarshal(&target->grasshopper, buffer, size, YES);
+	break;
+#endif
+// [GOST] CHANGES END
+
       case TPM_ALG_XOR:
       case TPM_ALG_NULL:
 	break;

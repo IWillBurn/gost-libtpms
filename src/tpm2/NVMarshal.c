@@ -2180,7 +2180,6 @@ skip_future_versions:
 #endif
 
 // [GOST] CHANGES START
-// [GOST TODO] Marshaling/Unmarshaling functions placeholder. A copy of the code for sha256 and sha512. 
 #if ALG_GOST3411_256
 #define HASH_STATE_GOST3411_256_MAGIC 0xa8d9a68c // the first 4 bytes of the hash of the string "GOST3411_256" in MD5
 #define HASH_STATE_GOST3411_256_VERSION 1 
@@ -4268,6 +4267,8 @@ static const struct _entry {
 // [GOST] CHANGES START
     { COMPILE_CONSTANT(ALG_GOST3411_256, EQ) },
     { COMPILE_CONSTANT(ALG_GOST3411_512, EQ) },
+    { COMPILE_CONSTANT(ALG_MAGMA, EQ) },
+    { COMPILE_CONSTANT(ALG_GRASSHOPPER, EQ) },
 // CHANGES END
 
     { COMPILE_CONSTANT(3072, LE) }, /* previous: MAX_RSA_KEY_BITS (4096 since StateFormatLevel 8) */
@@ -4461,7 +4462,7 @@ PACompileConstants_Unmarshal(BYTE **buffer, INT32 *size)
             break;
         case 3:
             /* PA_COMPILE_CONSTANTS_VERSION 3 had 104 entries */
-            exp_array_size = 122; // [GOST] +2 alg
+            exp_array_size = 124; // [GOST] +4 alg
             break;
         default:
             /* we don't support anything newer - no downgrade */

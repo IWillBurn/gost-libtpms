@@ -1592,6 +1592,12 @@ TPM_RESULT TPM_KeyParms_Load(TPM_KEY_PARMS *tpm_key_parms,	/* result */
 	  case TPM_ALG_AES128:
 	  case TPM_ALG_AES192:
 	  case TPM_ALG_AES256:
+
+	  // [GOST] CHANGES START
+	  case TPM_ALG_MAGMA256:
+	  case TPM_ALG_GRASSHOPPER256:
+	  // CHANGES END
+
 	  default:
 	    printf("TPM_KeyParms_Load: Cannot handle algorithmID %08x\n",
 		   tpm_key_parms->algorithmID);
@@ -1656,6 +1662,12 @@ TPM_RESULT TPM_KeyParms_Store(TPM_STORE_BUFFER *sbuffer,
 	  case TPM_ALG_AES128:
 	  case TPM_ALG_AES192:
 	  case TPM_ALG_AES256:
+
+	  // [GOST] CHANGES START
+	  case TPM_ALG_MAGMA256:
+	  case TPM_ALG_GRASSHOPPER256:
+	  // CHANGES END
+	  
 	  default:
 	    printf("TPM_KeyParms_Store: Cannot handle algorithmID %08x\n",
 		   tpm_key_parms->algorithmID);

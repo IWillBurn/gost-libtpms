@@ -760,7 +760,6 @@ TPM_RESULT TPM_SymmetricKeyData_EncryptSbuffer(TPM_SIZED_BUFFER *encrypt_data,
    AES 128 with CTR or OFB modes are supported.	 For CTR mode, pad is the initial count.  For OFB
    mode, pad is the IV.
 */
-
 TPM_RESULT TPM_SymmetricKeyData_StreamCrypt(unsigned char *data_out,		/* output */
 					    const unsigned char *data_in,	/* input */
 					    uint32_t data_size,			/* input */

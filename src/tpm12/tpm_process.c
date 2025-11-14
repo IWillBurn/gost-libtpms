@@ -4391,6 +4391,12 @@ static TPM_RESULT TPM_GetCapability_CapAuthEncrypt(TPM_STORE_BUFFER *capabilityR
       case TPM_ALG_MGF1:
       case TPM_ALG_AES192:
       case TPM_ALG_AES256:
+
+      // [GOST] CHANGES START
+	  case TPM_ALG_MAGMA256:
+	  case TPM_ALG_GRASSHOPPER256:
+	  // CHANGES END
+
       default:
 	/* unsupported protocols */
 	supported = FALSE;

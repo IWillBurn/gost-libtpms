@@ -211,12 +211,16 @@ typedef UINT16 TPM_ALG_ID;
 #define TPM_ALG_GOST3411_256     (TPM_ALG_ID)(ALG_GOST3411_256_VALUE)
 #define ALG_GOST3411_512_VALUE   0x0101
 #define TPM_ALG_GOST3411_512     (TPM_ALG_ID)(ALG_GOST3411_512_VALUE)
+#define ALG_MAGMA_VALUE          0x0102
+#define TPM_ALG_MAGMA            (TPM_ALG_ID)(ALG_MAGMA_VALUE)
+#define ALG_GRASSHOPPER_VALUE    0x0103
+#define TPM_ALG_GRASSHOPPER      (TPM_ALG_ID)(ALG_GRASSHOPPER_VALUE)
 // CHANGES END
 
 //        Values derived from Table "Definition of TPM_ALG_ID Constants" (Part 2: Structures)
 #define ALG_FIRST_VALUE 0x0001
 #define TPM_ALG_FIRST   (TPM_ALG_ID)(ALG_FIRST_VALUE)
-#define ALG_LAST_VALUE  0x0101 // [GOST] 0x0071 -> 0x0101
+#define ALG_LAST_VALUE  0x0103 // [GOST] 0x0071 -> 0x0103
 #define TPM_ALG_LAST    (TPM_ALG_ID)(ALG_LAST_VALUE)
 
 // Table "Definition of TPM_ECC_CURVE Constants" (Part 2: Structures)
@@ -2123,6 +2127,12 @@ typedef TPM_KEY_BITS TPMI_TDES_KEY_BITS;
 typedef TPM_KEY_BITS TPMI_AES_KEY_BITS;       // (Part 2: Structures)
 typedef TPM_KEY_BITS TPMI_SM4_KEY_BITS;       // (Part 2: Structures)
 typedef TPM_KEY_BITS TPMI_CAMELLIA_KEY_BITS;  // (Part 2: Structures)
+
+// [GOST] CHANGES START
+typedef TPM_KEY_BITS TPMI_MAGMA_KEY_BITS;
+typedef TPM_KEY_BITS TPMI_GRASSHOPPER_KEY_BITS;
+// CHANGES END
+
 typedef union
 {  // (Part 2: Structures)
 #if 	ALG_TDES					// libtpms added begin
@@ -2141,6 +2151,16 @@ typedef union
 #if ALG_XOR
     TPMI_ALG_HASH xor ;
 #endif  // ALG_XOR
+
+// [GOST] CHANGES START
+#if ALG_MAGMA
+    TPMI_MAGMA_KEY_BITS magma ;
+#endif
+#if ALG_GRASSHOPPER
+    TPMI_GRASSHOPPER_KEY_BITS grasshopper ;
+#endif
+// CHANGES END
+
 } TPMU_SYM_KEY_BITS;
 
 typedef union
@@ -2157,6 +2177,16 @@ typedef union
 #if ALG_CAMELLIA
     TPMI_ALG_SYM_MODE camellia;
 #endif  // ALG_CAMELLIA
+
+// [GOST] CHANGES START
+#if ALG_MAGMA
+    TPMI_ALG_SYM_MODE magma ;
+#endif
+#if ALG_GRASSHOPPER
+    TPMI_ALG_SYM_MODE grasshopper ;
+#endif
+// CHANGES END
+
     TPMI_ALG_SYM_MODE sym;
 } TPMU_SYM_MODE;
 

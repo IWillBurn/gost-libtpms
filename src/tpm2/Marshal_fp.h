@@ -247,6 +247,14 @@ extern "C" {
     TPMI_TDES_KEY_BITS_Marshal(TPMI_TDES_KEY_BITS *source, BYTE **buffer, INT32 *size); // libtpms added end
     UINT16
     TPMI_CAMELLIA_KEY_BITS_Marshal(TPMI_CAMELLIA_KEY_BITS *source, BYTE **buffer, INT32 *size);
+
+    // [GOST] CHANGES START
+    UINT16
+    TPMI_MAGMA_KEY_BITS_Marshal(TPMI_MAGMA_KEY_BITS *source, BYTE **buffer, INT32 *size);
+    UINT16
+    TPMI_GRASSHOPPER_KEY_BITS_Marshal(TPMI_GRASSHOPPER_KEY_BITS *source, BYTE **buffer, INT32 *size);
+    // CHANGES END
+
     UINT16
     TPMU_SYM_KEY_BITS_Marshal(TPMU_SYM_KEY_BITS *source, BYTE **buffer, INT32 *size, UINT32 selector);
     UINT16

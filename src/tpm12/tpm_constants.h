@@ -554,17 +554,22 @@
    The TPM MUST support the algorithms TPM_ALG_RSA, TPM_ALG_SHA, TPM_ALG_HMAC, and TPM_ALG_MGF1
 */
 
-#define TPM_ALG_RSA     0x00000001      /* The RSA algorithm. */
-/* #define TPM_ALG_DES  0x00000002         (was the DES algorithm) */
-/* #define TPM_ALG_3DES 0X00000003         (was the 3DES algorithm in EDE mode) */
-#define TPM_ALG_SHA     0x00000004      /* The SHA1 algorithm */
-#define TPM_ALG_HMAC    0x00000005      /* The RFC 2104 HMAC algorithm */
-#define TPM_ALG_AES128  0x00000006      /* The AES algorithm, key size 128 */
-#define TPM_ALG_MGF1    0x00000007      /* The XOR algorithm using MGF1 to create a string the size
+#define TPM_ALG_RSA              0x00000001      /* The RSA algorithm. */
+/* #define TPM_ALG_DES           0x00000002         (was the DES algorithm) */
+/* #define TPM_ALG_3DES          0X00000003         (was the 3DES algorithm in EDE mode) */
+#define TPM_ALG_SHA              0x00000004      /* The SHA1 algorithm */
+#define TPM_ALG_HMAC             0x00000005      /* The RFC 2104 HMAC algorithm */
+#define TPM_ALG_AES128           0x00000006      /* The AES algorithm, key size 128 */
+#define TPM_ALG_MGF1             0x00000007      /* The XOR algorithm using MGF1 to create a string the size
                                            of the encrypted block */
-#define TPM_ALG_AES192  0x00000008      /* AES, key size 192 */
-#define TPM_ALG_AES256  0x00000009      /* AES, key size 256 */
-#define TPM_ALG_XOR     0x0000000A      /* XOR using the rolling nonces */
+#define TPM_ALG_AES192           0x00000008      /* AES, key size 192 */
+#define TPM_ALG_AES256           0x00000009      /* AES, key size 256 */
+#define TPM_ALG_XOR              0x0000000A      /* XOR using the rolling nonces */
+
+// [GOST] CHANGES START
+#define TPM_ALG_MAGMA256         0x0000000B      /* Magma */
+#define TPM_ALG_GRASSHOPPER256   0x0000000C      /* Grasshopper */
+// [GOST] CHANGES END
 
 /* 4.9 TPM_PHYSICAL_PRESENCE rev 87
 

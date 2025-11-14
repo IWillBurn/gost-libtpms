@@ -1229,6 +1229,28 @@ TPMI_CAMELLIA_KEY_BITS_Marshal(TPMI_CAMELLIA_KEY_BITS *source, BYTE **buffer, IN
 }
 #endif         // libtpms added end
 
+// [GOST] CHANGES START
+#if ALG_MAGMA
+UINT16
+TPMI_MAGMA_KEY_BITS_Marshal(TPMI_MAGMA_KEY_BITS *source, BYTE **buffer, INT32 *size)
+{
+    UINT16 written = 0;
+    written += TPM_KEY_BITS_Marshal(source, buffer, size);
+    return written;
+}
+#endif
+
+#if ALG_GRASSHOPPER
+UINT16
+TPMI_GRASSHOPPER_KEY_BITS_Marshal(TPMI_GRASSHOPPER_KEY_BITS *source, BYTE **buffer, INT32 *size)
+{
+    UINT16 written = 0;
+    written += TPM_KEY_BITS_Marshal(source, buffer, size);
+    return written;
+}
+#endif
+// CHANGES END
+
 /* Table 2:128 - Definition of TPMU_SYM_KEY_BITS Union (StructuresTable()) */
 
 UINT16
@@ -1262,6 +1284,20 @@ TPMU_SYM_KEY_BITS_Marshal(TPMU_SYM_KEY_BITS *source, BYTE **buffer, INT32 *size,
 	written += TPMI_ALG_HASH_Marshal(&source->xor, buffer, size);
 	break;
 #endif
+
+// [GOST] CHANGES START
+#if ALG_MAGMA
+      case TPM_ALG_MAGMA:
+	written += TPMI_MAGMA_KEY_BITS_Marshal(&source->magma, buffer, size);
+	break;
+#endif
+#if ALG_GRASSHOPPER
+      case TPM_ALG_GRASSHOPPER:
+	written += TPMI_GRASSHOPPER_KEY_BITS_Marshal(&source->grasshopper, buffer, size);
+	break;
+#endif
+// CHANGES END
+
       case TPM_ALG_NULL:
 	break;
       default:
@@ -1298,6 +1334,20 @@ TPMU_SYM_MODE_Marshal(TPMU_SYM_MODE *source, BYTE **buffer, INT32 *size, UINT32 
 	written += TPMI_ALG_SYM_MODE_Marshal(&source->tdes, buffer, size);
 	break;
 #endif			// libtpms added end
+
+// [GOST] CHANGES START
+#if ALG_MAGMA
+      case TPM_ALG_MAGMA:
+	written += TPMI_ALG_SYM_MODE_Marshal(&source->magma, buffer, size);
+	break;
+#endif
+#if ALG_GRASSHOPPER
+      case TPM_ALG_GRASSHOPPER	:
+	written += TPMI_ALG_SYM_MODE_Marshal(&source->grasshopper, buffer, size);
+	break;
+#endif
+// CHANGES END
+
 #if ALG_XOR
       case TPM_ALG_XOR:
 #endif

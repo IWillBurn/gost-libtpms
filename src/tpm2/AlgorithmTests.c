@@ -281,7 +281,7 @@ static void TestSymmetricAlgorithm(const SYMMETRIC_TEST_VECTOR* test,  //
 //      FALSE(0)        not all symmetric algorithms tested
 static BOOL AllSymsAreDone(ALGORITHM_VECTOR* toTest)
 {
-    return (!TEST_BOTH(TPM_ALG_AES) && !TEST_BOTH(TPM_ALG_SM4));
+    return (!TEST_BOTH(TPM_ALG_AES) && !TEST_BOTH(TPM_ALG_SM4) && !TEST_BOTH(TPM_ALG_MAGMA) && !TEST_BOTH(TPM_ALG_GRASSHOPPER)); // [GOST] Add TPM_ALG_MAGMA and TPM_ALG_GRASSHOPPER
 }
 
 //*** AllModesAreDone()
@@ -309,7 +309,7 @@ static TPM_RC TestSymmetric(TPM_ALG_ID alg, ALGORITHM_VECTOR* toTest)
     //
     if(!TEST_BIT(alg, *toTest))
         return TPM_RC_SUCCESS;
-    if(alg == TPM_ALG_AES || alg == TPM_ALG_SM4 || alg == TPM_ALG_CAMELLIA || alg == TPM_ALG_TDES)	// libtpms added TPM_ALG_TDES
+    if(alg == TPM_ALG_AES || alg == TPM_ALG_SM4 || alg == TPM_ALG_CAMELLIA || alg == TPM_ALG_TDES || alg == TPM_ALG_MAGMA || alg == TPM_ALG_GRASSHOPPER) // [GOST] Add TPM_ALG_MAGMA and TPM_ALG_GRASSHOPPER // libtpms added TPM_ALG_TDES
     {
         // Will test the algorithm for all modes and key sizes
         CLEAR_BOTH(alg);
@@ -344,7 +344,7 @@ static TPM_RC TestSymmetric(TPM_ALG_ID alg, ALGORITHM_VECTOR* toTest)
             // tested first. That means that all of their modes would have been
             // tested for all key sizes. If there is no block cipher left to
             // test, then clear this mode bit.
-            if(!TEST_BIT(TPM_ALG_AES, *toTest) && !TEST_BIT(TPM_ALG_SM4, *toTest))
+            if(!TEST_BIT(TPM_ALG_AES, *toTest) && !TEST_BIT(TPM_ALG_SM4, *toTest) && !TEST_BIT(TPM_ALG_MAGMA, *toTest) && !TEST_BIT(TPM_ALG_GRASSHOPPER, *toTest)) // [GOST] Add TPM_ALG_MAGMA and TPM_ALG_GRASSHOPPER
             {
                 CLEAR_BOTH(alg);
             }
@@ -363,6 +363,11 @@ static TPM_RC TestSymmetric(TPM_ALG_ID alg, ALGORITHM_VECTOR* toTest)
         {
             CLEAR_BOTH(TPM_ALG_AES);
             CLEAR_BOTH(TPM_ALG_SM4);
+
+            // [GOST] CHANGES START
+            CLEAR_BOTH(TPM_ALG_MAGMA);
+            CLEAR_BOTH(TPM_ALG_GRASSHOPPER);
+            // CHANGES END
         }
     }
     else
@@ -893,6 +898,16 @@ TestAlgorithm(TPM_ALG_ID alg, ALGORITHM_VECTOR* toTest)
 #  if ALG_TDES
             case TPM_ALG_TDES:      // libtpms added
 #  endif
+
+// [GOST] CHANGES START
+#  if ALG_MAGMA
+            case TPM_ALG_MAGMA:
+#  endif
+#  if ALG_GRASSHOPPER
+            case TPM_ALG_GRASSHOPPER:
+#  endif
+// CHANGES END
+
             // Symmetric modes
 #  if !ALG_CFB
 #    error CFB is required in all TPM implementations

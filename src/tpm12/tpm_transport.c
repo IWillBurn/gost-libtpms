@@ -646,6 +646,12 @@ void TPM_TransportPublic_CheckAlgId(TPM_BOOL *supported,
       case TPM_ALG_HMAC:
       case TPM_ALG_AES192:
       case TPM_ALG_AES256:
+
+	  // [GOST] CHANGES START
+	  case TPM_ALG_MAGMA256:
+	  case TPM_ALG_GRASSHOPPER256:
+	  // CHANGES END
+	  
       default:
 	*supported = FALSE;
 	break;
@@ -702,6 +708,12 @@ TPM_RESULT TPM_TransportPublic_CheckEncScheme(uint32_t *blockSize,
       case TPM_ALG_SHA:
       case TPM_ALG_HMAC:
       case TPM_ALG_XOR:
+
+	  // [GOST] CHANGES START
+	  case TPM_ALG_MAGMA256:
+	  case TPM_ALG_GRASSHOPPER256:
+	  // CHANGES END
+
       default:
 	printf("TPM_TransportPublic_CheckEncScheme: Error, algId not supported\n");
 	rc = TPM_BAD_KEY_PROPERTY;

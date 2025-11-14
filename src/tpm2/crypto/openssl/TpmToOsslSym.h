@@ -192,6 +192,49 @@ typedef void(*TpmCryptSymFinal_t)(void *keySchedule); /* libtpms added */
 #define tpmKeyScheduleCAMELLIA  CAMELLIA_KEY
 #define TpmCryptFinalCAMELLIA            NULL // libtpms added
 
+// [GOST] CHANGES START
+#  include "TpmToGostSupport_fp.h"
+
+//***************************************************************
+//** Links to the GOST-ENGINE MAGMA code
+//***************************************************************
+
+#if ALG_MAGMA
+#  include <gost-engine/gost89.h>
+#endif
+
+// Macros to set up the encryption/decryption key schedules
+#define TpmCryptSetEncryptKeyMAGMA(key, keySizeInBits, schedule) \
+    Magma_set_encrypt_key((key), (keySizeInBits), (tpmKeyScheduleMAGMA*)(schedule))
+#define TpmCryptSetDecryptKeyMAGMA(key, keySizeInBits, schedule) \
+    Magma_set_decrypt_key((key), (keySizeInBits), (tpmKeyScheduleMAGMA*)(schedule))
+
+#define TpmCryptEncryptMAGMA Magma_encrypt
+#define TpmCryptDecryptMAGMA Magma_decrypt
+#define tpmKeyScheduleMAGMA  gost_ctx 
+#define TpmCryptFinalMAGMA   NULL
+
+//***************************************************************
+//** Links to the GOST-ENGINE GRASSHOPPER code
+//***************************************************************
+
+#if ALG_GRASSHOPPER
+#  include <gost-engine/gost_grasshopper_core.h>
+#endif
+
+// Macros to set up the encryption/decryption key schedules
+#define TpmCryptSetEncryptKeyGRASSHOPPER(key, keySizeInBits, schedule) \
+    Grasshopper_set_encrypt_key((key), (keySizeInBits), (tpmKeyScheduleGRASSHOPPER*)(schedule))
+#define TpmCryptSetDecryptKeyGRASSHOPPER(key, keySizeInBits, schedule) \
+    Grasshopper_set_decrypt_key((key), (keySizeInBits), (tpmKeyScheduleGRASSHOPPER*)(schedule))
+
+#define TpmCryptEncryptGRASSHOPPER Grasshopper_encrypt
+#define TpmCryptDecryptGRASSHOPPER Grasshopper_decrypt
+#define tpmKeyScheduleGRASSHOPPER  grasshopper_round_keys_t
+#define TpmCryptFinalGRASSHOPPER   NULL
+// [GOST] CHANGES END
+
+
 // Forward reference
 
 // kgold typedef union tpmCryptKeySchedule_t tpmCryptKeySchedule_t;

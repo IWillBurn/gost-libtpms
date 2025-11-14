@@ -145,8 +145,16 @@
 #define     TDES_128                    (ALG_TDES && YES)
 #define     TDES_192                    (ALG_TDES && YES)
 
+// [GOST] CHANGES START
+#define ALG_MAGMA                   ALG_YES
+#define     MAGMA_256                   (YES * ALG_MAGMA)
+
+#define ALG_GRASSHOPPER             ALG_YES
+#define     GRASSHOPPER_256             (YES * ALG_GRASSHOPPER)
+// CHANGES END
+
 // must be yes if any above are yes.
-#define ALG_SYMCIPHER               (ALG_AES || ALG_SM4 || ALG_CAMELLIA)
+#define ALG_SYMCIPHER               (ALG_AES || ALG_SM4 || ALG_CAMELLIA || ALG_MAGMA || ALG_GRASSHOPPER)
 #define ALG_CMAC                    (YES * ALG_SYMCIPHER)
 
 // block cipher modes

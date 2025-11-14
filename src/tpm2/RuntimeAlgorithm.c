@@ -82,6 +82,19 @@ static const struct KeySizes s_KeySizesTDES[] = {
     { .enabled = TDES_192, .size = 192, .stateFormatLevel = 1 },
     { .enabled = false   , .size = 0  , .stateFormatLevel = 0 },
 };
+
+// [GOST] CHANGES START
+static const struct KeySizes s_KeySizesMagma[] = {
+    { .enabled = MAGMA_256, .size = 256, .stateFormatLevel = 1 },
+    { .enabled = false   , .size = 0  , .stateFormatLevel = 0 },
+};
+
+static const struct KeySizes s_KeySizesGrasshopper[] = {
+    { .enabled = GRASSHOPPER_256, .size = 256, .stateFormatLevel = 1 },
+    { .enabled = false   , .size = 0  , .stateFormatLevel = 0 },
+};
+// CHANGES END
+
 static const struct KeySizes s_KeySizesRSA[] = {
     { .enabled = RSA_1024, .size = 1024, .stateFormatLevel = 1 },
     { .enabled = RSA_2048, .size = 2048, .stateFormatLevel = 1 },
@@ -168,8 +181,10 @@ static const struct {
     [TPM_ALG_ECB] = ENCRYPTING(ALG_ECB, "ecb", true, 1),
 
 	// [GOST] CHANGES START
-	[TPM_ALG_GOST3411_256] = HASH(TPM_ALG_GOST3411_256, "gost3411-256", true, 1),
-	[TPM_ALG_GOST3411_512] = HASH(TPM_ALG_GOST3411_512, "gost3411-512", true, 1),
+	[TPM_ALG_GOST3411_256] = HASH(ALG_GOST3411_256, "gost3411-256", true, 1),
+	[TPM_ALG_GOST3411_512] = HASH(ALG_GOST3411_512, "gost3411-512", true, 1),
+	[TPM_ALG_MAGMA] = SYMMETRIC(ALG_MAGMA, "magma", s_KeySizesMagma, true, 1),
+	[TPM_ALG_GRASSHOPPER] = SYMMETRIC(ALG_GRASSHOPPER, "grasshopper", s_KeySizesGrasshopper, true, 1),
 	// CHANGES END
 
     /* all newly added algorithms must have .canBedisable=true so they can be disabled */
@@ -211,6 +226,11 @@ static const TPM_ALG_ID algsWithKeySizes[] = {
     TPM_ALG_AES,
     TPM_ALG_SM4,
     TPM_ALG_CAMELLIA,
+
+	// [GOST] CHANGES START
+	TPM_ALG_MAGMA,
+	TPM_ALG_GRASSHOPPER,
+	// CHANGES END
 };
 
 static unsigned int

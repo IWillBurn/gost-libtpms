@@ -159,6 +159,19 @@ const SYMMETRIC_TEST_VECTOR c_symTestValues[NUM_SYMS + 1] = {
      {dataOut_CAMELLIA256_CTR, dataOut_CAMELLIA256_OFB, dataOut_CAMELLIA256_CBC,
       dataOut_CAMELLIA256_CFB, dataOut_CAMELLIA256_ECB}},
 #endif
+
+// [GOST] CHANGES START
+#if ALG_MAGMA && MAGMA_256
+    {TPM_ALG_MAGMA, 256, key_MAGMA, 8, sizeof(dataIn_MAGMA), dataIn_MAGMA,
+     {dataOut_MAGMA_CTR, NULL, dataOut_MAGMA_CBC, NULL, NULL}},
+#endif
+
+#if ALG_GRASSHOPPER && GRASSHOPPER_256
+    {TPM_ALG_GRASSHOPPER, 256, key_GRASSHOPPER, 16, sizeof(dataIn_GRASSHOPPER), dataIn_GRASSHOPPER,
+     {dataOut_GRASSHOPPER_CTR, NULL, dataOut_GRASSHOPPER_CBC, NULL, NULL}},
+#endif
+// CHANGES END
+
 // libtpms added end
     {0}};
 

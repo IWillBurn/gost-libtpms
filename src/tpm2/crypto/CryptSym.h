@@ -89,17 +89,38 @@
 #   define IF_IMPLEMENTED_TDES(op)
 #endif
 
+// [GOST] CHANGES START
+#if ALG_MAGMA
+#   define IF_IMPLEMENTED_MAGMA(op)     op(MAGMA, magma)
+#else
+#   define IF_IMPLEMENTED_MAGMA(op)
+#endif
+
+#if ALG_GRASSHOPPER
+#   define IF_IMPLEMENTED_GRASSHOPPER(op)   op(GRASSHOPPER, grasshopper)
+#else
+#   define IF_IMPLEMENTED_GRASSHOPPER(op)
+#endif
+// CHANGES END
+
+// [GOST] ADD IF_IMPLEMENTED_MAGMA AND IF_IMPLEMENTED_GRASSHOPPER
 #define FOR_EACH_SYM(op)   \
     IF_IMPLEMENTED_AES(op) \
     IF_IMPLEMENTED_SM4(op) \
     IF_IMPLEMENTED_CAMELLIA(op) \
-    IF_IMPLEMENTED_TDES(op)
+    IF_IMPLEMENTED_TDES(op) \
+    IF_IMPLEMENTED_MAGMA(op) \
+    IF_IMPLEMENTED_GRASSHOPPER(op)
 
 						/* libtpms added begin */
+                        
+// [GOST] ADD IF_IMPLEMENTED_MAGMA AND IF_IMPLEMENTED_GRASSHOPPER
 #define FOR_EACH_SYM_WITHOUT_TDES(op) \
     IF_IMPLEMENTED_AES(op)            \
     IF_IMPLEMENTED_SM4(op)            \
-    IF_IMPLEMENTED_CAMELLIA(op)			/* libtpms added end */
+    IF_IMPLEMENTED_CAMELLIA(op) \
+    IF_IMPLEMENTED_MAGMA(op) \
+    IF_IMPLEMENTED_GRASSHOPPER(op)      /* libtpms added end */
 
 // Macros for creating the key schedule union
 #define KEY_SCHEDULE(SYM, sym) tpmKeySchedule##SYM sym;

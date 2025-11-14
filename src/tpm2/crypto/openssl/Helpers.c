@@ -62,12 +62,16 @@
 #include "ExpDCache_fp.h"
 #include "Helpers_fp.h"
 #include "BnToOsslMath_fp.h"
+
 #include "TpmMath_Util_fp.h"
+
+#include "TpmToGostSupport_fp.h"
 
 #include "config.h"
 
 #include <openssl/evp.h>
 #include <openssl/rsa.h>
+
 #if OPENSSL_VERSION_NUMBER >= 0x30000000L
 # include <openssl/core_names.h>
 # include <openssl/param_build.h>
@@ -335,6 +339,111 @@ GetEVPCipher(TPM_ALG_ID    algorithm,       // IN
         }
         break;
 #endif
+
+// [GOST] CHANGES START
+#if ALG_MAGMA
+    case TPM_ALG_MAGMA:
+        algIdx = 0;
+        *keyToUseLen = keySizeInBytes;
+
+        switch (mode) {
+#if ALG_CTR
+        case TPM_ALG_CTR:
+            if (i < 2) {
+                evpfn = NULL;
+                break;
+            }
+            evpfn = magma_ctr_evp;
+            break;
+#endif
+#if ALG_OFB
+        case TPM_ALG_OFB:
+            evpfn = NULL;
+            break;
+#endif
+#if ALG_CBC
+        case TPM_ALG_CBC:
+            if (i < 2) {
+                evpfn = NULL;
+                break;
+            }
+            evpfn = magma_cbc_evp;
+            break;
+#endif
+#if ALG_CFB
+        case TPM_ALG_CFB:
+            evpfn = NULL;
+            break;
+#endif
+#if ALG_ECB
+        case TPM_ALG_ECB:
+            if (i < 2) {
+                evpfn = NULL;
+                break;
+            }
+            evpfn = magma_ecb_evp;
+            break;
+#endif
+        }
+        break;
+#endif
+
+#if ALG_GRASSHOPPER
+    case TPM_ALG_GRASSHOPPER:
+        algIdx = 0;
+        *keyToUseLen = keySizeInBytes;
+
+        switch (mode) {
+#if ALG_CTR
+        case TPM_ALG_CTR:
+            if (i < 2) {
+                evpfn = NULL;
+                break;
+            }
+            evpfn = grasshopper_ctr_evp;
+            break;
+#endif
+#if ALG_OFB
+        case TPM_ALG_OFB:
+            if (i < 2) {
+                evpfn = NULL;
+                break;
+            }
+            evpfn = grasshopper_ofb_evp;
+            break;
+#endif
+#if ALG_CBC
+        case TPM_ALG_CBC:
+            if (i < 2) {
+                evpfn = NULL;
+                break;
+            }
+            evpfn = grasshopper_cbc_evp;
+            break;
+#endif
+#if ALG_CFB
+        case TPM_ALG_CFB:
+            if (i < 2) {
+                evpfn = NULL;
+                break;
+            }
+            evpfn = grasshopper_cfb_evp;
+            break;
+#endif
+#if ALG_ECB
+        case TPM_ALG_ECB:
+            if (i < 2) {
+                evpfn = NULL;
+                break;
+            }
+            evpfn = grasshopper_ecb_evp;
+            break;
+#endif
+        }
+        break;
+#endif
+// CHANGES END
+
     }
 
     if (evpfn == NULL) {
