@@ -92,7 +92,7 @@
 #define MAX_CAP_BUFFER             1024
 /* libtmps: 65 OBJECTs in USER NVRAM expanded by 704 bytes due to size
  * increase of OBJECT from 2048 bit RSA keys to 3072 bit by 704 bytes*/
-#define NV_MEMORY_SIZE                  (128 * 1024 + 65 * 704)  /* libtpms changed */
+#define NV_MEMORY_SIZE                  (128 * 1024 + 65 * 704)  /* libtpms changed */ // [GOST] TODO: FIX IT
 #define MIN_COUNTER_INDICES        8
 #define NUM_STATIC_PCR             16
 #define MAX_ALG_LIST_SIZE          64

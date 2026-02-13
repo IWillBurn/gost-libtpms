@@ -274,6 +274,7 @@ libtpms_tpm2_la_SOURCES = \
 	tpm2/TpmEcc_Signature_ECDSA.c \
 	tpm2/TpmEcc_Signature_Schnorr.c \
 	tpm2/TpmEcc_Signature_SM2.c \
+	tpm2/TpmEcc_Signature_GOST3410.c \
 	tpm2/TpmEcc_Signature_Util.c \
 	tpm2/TpmEcc_Util.c \
 	tpm2/TpmMath_Debug.c \
@@ -536,6 +537,7 @@ noinst_HEADERS += \
 	tpm2/TpmEcc_Signature_ECDSA_fp.h \
 	tpm2/TpmEcc_Signature_Schnorr_fp.h \
 	tpm2/TpmEcc_Signature_SM2_fp.h \
+	tpm2/TpmEcc_Signature_GOST3410_fp.h \
 	tpm2/TpmEcc_Signature_Util_fp.h \
 	tpm2/TpmFail_fp.h \
 	tpm2/TpmMath_Debug_fp.h \

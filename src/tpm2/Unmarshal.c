@@ -247,6 +247,31 @@ TPM_ECC_CURVE_Unmarshal(TPM_ECC_CURVE *target, BYTE **buffer, INT32 *size)
 #  if ECC_CURVE_448
 	  case TPM_ECC_CURVE_448:
 #  endif  // ECC_CURVE_448
+
+// [GOST] CHANGES START
+#  if ECC_TC26_GOST3410_256_PARAM_SET_A
+	  case TPM_ECC_TC26_GOST3410_256_PARAM_SET_A:
+#  endif  // ECC_TC26_GOST3410_256_PARAM_SET_A
+#  if ECC_TC26_GOST3410_256_PARAM_SET_B
+	  case TPM_ECC_TC26_GOST3410_256_PARAM_SET_B:
+#  endif  // ECC_TC26_GOST3410_256_PARAM_SET_B
+#  if ECC_TC26_GOST3410_256_PARAM_SET_C
+	  case TPM_ECC_TC26_GOST3410_256_PARAM_SET_C:
+#  endif  // ECC_TC26_GOST3410_256_PARAM_SET_C
+#  if ECC_TC26_GOST3410_256_PARAM_SET_D
+	  case TPM_ECC_TC26_GOST3410_256_PARAM_SET_D:
+#  endif  // ECC_TC26_GOST3410_256_PARAM_SET_D
+#  if ECC_TC26_GOST3410_512_PARAM_SET_A
+	  case TPM_ECC_TC26_GOST3410_512_PARAM_SET_A:
+#  endif  // ECC_TC26_GOST3410_512_PARAM_SET_A
+#  if ECC_TC26_GOST3410_512_PARAM_SET_B
+	  case TPM_ECC_TC26_GOST3410_512_PARAM_SET_B:
+#  endif  // ECC_TC26_GOST3410_512_PARAM_SET_B
+#  if ECC_TC26_GOST3410_512_PARAM_SET_C
+	  case TPM_ECC_TC26_GOST3410_512_PARAM_SET_C:
+#  endif  // ECC_TC26_GOST3410_512_PARAM_SET_C
+// CHANGES END
+
 	    if (*target != TPM_ECC_NONE &&		// libtpms added begin
 		!CryptEccIsCurveRuntimeUsable(*target)) {
 	      rc = TPM_RC_CURVE;
@@ -1600,6 +1625,16 @@ TPMI_ALG_SIG_SCHEME_Unmarshal(TPMI_ALG_SIG_SCHEME *target, BYTE **buffer, INT32 
 #if ALG_ECSCHNORR
 	  case TPM_ALG_ECSCHNORR:
 #endif
+
+// [GOST] CHANGES START
+#if ALG_GOST3410_256
+	  case TPM_ALG_GOST3410_256:
+#endif
+#if ALG_GOST3410_512
+	  case TPM_ALG_GOST3410_512:
+#endif
+// CHANGES END
+
 	    if (!RuntimeAlgorithmCheckEnabled(&g_RuntimeProfile.RuntimeAlgorithm,	// libtpms added begin
 					      *target)) {
 		rc = TPM_RC_SCHEME;
@@ -3625,6 +3660,30 @@ TPMS_SIG_SCHEME_SM2_Unmarshal(TPMS_SIG_SCHEME_SM2 *target, BYTE **buffer, INT32 
     return rc;
 }
 
+// [GOST] CHANGES START
+TPM_RC
+TPMS_SIG_SCHEME_GOST3410_256_Unmarshal(TPMS_SIG_SCHEME_GOST3410_256 *target, BYTE **buffer, INT32 *size)
+{
+    TPM_RC rc = TPM_RC_SUCCESS;
+
+    if (rc == TPM_RC_SUCCESS) {
+	rc = TPMS_SCHEME_HASH_Unmarshal(target, buffer, size);
+    }
+    return rc;
+}
+
+TPM_RC
+TPMS_SIG_SCHEME_GOST3410_512_Unmarshal(TPMS_SIG_SCHEME_GOST3410_512 *target, BYTE **buffer, INT32 *size)
+{
+    TPM_RC rc = TPM_RC_SUCCESS;
+
+    if (rc == TPM_RC_SUCCESS) {
+	rc = TPMS_SCHEME_HASH_Unmarshal(target, buffer, size);
+    }
+    return rc;
+}
+// CHANGES END
+
 /* Table 144 - Definition of TPMU_SIG_SCHEME Union <IN/OUT, S> */
 
 TPM_RC
@@ -3667,6 +3726,20 @@ TPMU_SIG_SCHEME_Unmarshal(TPMU_SIG_SCHEME *target, BYTE **buffer, INT32 *size, U
 	rc = TPMS_SIG_SCHEME_ECSCHNORR_Unmarshal(&target->ecschnorr, buffer, size);
 	break;
 #endif
+
+// [GOST] CHANGES START
+#if ALG_GOST3410_256
+      case TPM_ALG_GOST3410_256:
+	rc = TPMS_SIG_SCHEME_GOST3410_256_Unmarshal(&target->gost3410_256, buffer, size);
+	break;
+#endif
+#if ALG_GOST3410_512
+      case TPM_ALG_GOST3410_512:
+	rc = TPMS_SIG_SCHEME_GOST3410_512_Unmarshal(&target->gost3410_512, buffer, size);
+	break;
+#endif
+// CHANGES END
+
 #if ALG_HMAC
       case TPM_ALG_HMAC:
 	rc = TPMS_SCHEME_HMAC_Unmarshal(&target->hmac, buffer, size);
@@ -3894,6 +3967,16 @@ TPMI_ALG_ASYM_SCHEME_Unmarshal(TPMI_ALG_ASYM_SCHEME *target, BYTE **buffer, INT3
 #if ALG_ECSCHNORR
 	  case TPM_ALG_ECSCHNORR:
 #endif
+
+// [GOST] CHANGES START
+#if ALG_GOST3410_256
+	  case TPM_ALG_GOST3410_256:
+#endif
+#if ALG_GOST3410_512
+	  case TPM_ALG_GOST3410_512:
+#endif
+// CHANGES END
+
 #if ALG_RSAES
 	  case TPM_ALG_RSAES:
 #endif
@@ -3973,6 +4056,20 @@ TPMU_ASYM_SCHEME_Unmarshal(TPMU_ASYM_SCHEME *target, BYTE **buffer, INT32 *size,
 	rc = TPMS_SIG_SCHEME_ECSCHNORR_Unmarshal(&target->ecschnorr, buffer, size);
 	break;
 #endif
+
+// [GOST] CHANGES START
+#if ALG_GOST3410_256
+      case TPM_ALG_GOST3410_256:
+	rc = TPMS_SIG_SCHEME_GOST3410_256_Unmarshal(&target->gost3410_256, buffer, size);
+	break;
+#endif
+#if ALG_GOST3410_512
+      case TPM_ALG_GOST3410_512:
+	rc = TPMS_SIG_SCHEME_GOST3410_512_Unmarshal(&target->gost3410_512, buffer, size);
+	break;
+#endif
+// CHANGES END
+
 #if ALG_RSAES
       case TPM_ALG_RSAES:
 	rc = TPMS_ENC_SCHEME_RSAES_Unmarshal(&target->rsaes, buffer, size);
@@ -4260,6 +4357,16 @@ TPMI_ALG_ECC_SCHEME_Unmarshal(TPMI_ALG_ECC_SCHEME *target, BYTE **buffer, INT32 
 #if ALG_ECMQV
 	  case TPM_ALG_ECMQV:
 #endif
+
+// [GOST] CHANGES START
+#if ALG_GOST3410_256
+	  case TPM_ALG_GOST3410_256:
+#endif
+#if ALG_GOST3410_512
+	  case TPM_ALG_GOST3410_512:
+#endif
+// CHANGES END
+
 	    if (!RuntimeAlgorithmCheckEnabled(&g_RuntimeProfile.RuntimeAlgorithm, *target)) {	// libtpms added begin
 		rc = TPM_RC_SCHEME;
 	    }											// libtpms added end
@@ -4424,6 +4531,30 @@ TPMS_SIGNATURE_ECSCHNORR_Unmarshal(TPMS_SIGNATURE_ECSCHNORR *target, BYTE **buff
     return rc;
 }
 
+// [GOST] CHANGES START
+TPM_RC
+TPMS_SIGNATURE_GOST3410_256_Unmarshal(TPMS_SIGNATURE_GOST3410_256 *target, BYTE **buffer, INT32 *size)
+{
+    TPM_RC rc = TPM_RC_SUCCESS;
+
+    if (rc == TPM_RC_SUCCESS) {
+	rc = TPMS_SIGNATURE_ECC_Unmarshal(target, buffer, size);
+    }
+    return rc;
+}
+
+TPM_RC
+TPMS_SIGNATURE_GOST3410_512_Unmarshal(TPMS_SIGNATURE_GOST3410_512 *target, BYTE **buffer, INT32 *size)
+{
+    TPM_RC rc = TPM_RC_SUCCESS;
+
+    if (rc == TPM_RC_SUCCESS) {
+	rc = TPMS_SIGNATURE_ECC_Unmarshal(target, buffer, size);
+    }
+    return rc;
+}
+// CHANGES END
+
 /* Table 172 - Definition of TPMU_SIGNATURE Union <IN/OUT, S> */
 
 TPM_RC
@@ -4473,6 +4604,20 @@ TPMU_SIGNATURE_Unmarshal(TPMU_SIGNATURE *target, BYTE **buffer, INT32 *size, UIN
 	rc = TPMT_HA_Unmarshal(&target->hmac, buffer, size, NO);
 	break;
 #endif
+
+// [GOST] CHANGES START
+#if ALG_GOST3410_256
+      case TPM_ALG_GOST3410_256:
+	rc = TPMS_SIGNATURE_GOST3410_256_Unmarshal(&target->gost3410_256, buffer, size);
+	break;
+#endif
+#if ALG_GOST3410_512
+      case TPM_ALG_GOST3410_512:
+	rc = TPMS_SIGNATURE_GOST3410_512_Unmarshal(&target->gost3410_512, buffer, size);
+	break;
+#endif
+// CHANGES END
+
       case TPM_ALG_NULL:
 	break;
       default:

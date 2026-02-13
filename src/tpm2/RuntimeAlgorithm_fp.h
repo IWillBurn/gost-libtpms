@@ -43,15 +43,16 @@
 #define RUNTIME_ALGORITHM_H
 
 #define NUM_ENTRIES_ALGORITHM_PROPERTIES	(size_t)(TPM_ALG_LAST + 1)
-#define NUM_ENTRIES_ECC_ALGO_PROPERTIES         (size_t)(TPM_ECC_SM2_P256 + 1)
+#define NUM_ENTRIES_ECC_ALGO_PROPERTIES         (size_t)(TPM_ECC_SM2_P256 + 1) // [GOST] TODO: FIX IT
 
 struct RuntimeAlgorithm {
     /* array holding minimum key sizes for algorithms in algsWithKeySizes */
     UINT16 algosMinimumKeySizes[NUM_ENTRIES_ALGORITHM_PROPERTIES];
     ALGORITHM_VECTOR enabledAlgorithms;
     unsigned char enabledEccShortcuts[1];
-#define RUNTIME_ALGORITHM_ECC_NIST_BIT      0
-#define RUNTIME_ALGORITHM_ECC_BN_BIT        1
+#define RUNTIME_ALGORITHM_ECC_NIST_BIT      	0
+#define RUNTIME_ALGORITHM_ECC_BN_BIT        	1
+#define RUNTIME_ALGORITHM_ECC_TC26_GOST3410_BIT 2
     unsigned char enabledEccCurves[(NUM_ENTRIES_ECC_ALGO_PROPERTIES + 7) / 8];
     char *algorithmProfile;
 };

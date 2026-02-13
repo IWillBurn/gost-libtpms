@@ -64,6 +64,7 @@
 #include "TpmEcc_Signature_ECDAA_fp.h"
 #include "TpmEcc_Signature_Schnorr_fp.h"
 #include "TpmEcc_Signature_SM2_fp.h"
+#include "TpmEcc_Signature_GOST3410_fp.h"
 #include "TpmEcc_Util_fp.h"
 #include "TpmMath_Util_fp.h"
 #include "CryptEccSignature_fp.h"
@@ -98,7 +99,6 @@ LIB_EXPORT TPM_RC CryptEccSign(TPMT_SIGNATURE* signature,  // OUT: signature
     CRYPT_ECC_NUM(bnR);
     CRYPT_ECC_NUM(bnS);
     TPM_RC retVal = TPM_RC_SCHEME;
-    //
     NOT_REFERENCED(scheme);
     if(E == NULL)
         ERROR_EXIT(TPM_RC_VALUE);
@@ -136,6 +136,20 @@ LIB_EXPORT TPM_RC CryptEccSign(TPMT_SIGNATURE* signature,  // OUT: signature
             retVal = TpmEcc_SignEcSm2(bnR, bnS, E, bnD, digest, rand);
             break;
 #  endif
+
+// [GOST] CHANGES START
+#  if ALG_GOST3410_256
+        case TPM_ALG_GOST3410_256:
+            retVal = TpmEcc_SignGost3410256(bnR, bnS, E, bnD, digest, rand);
+            break;
+#  endif
+#  if ALG_GOST3410_512
+        case TPM_ALG_GOST3410_512:
+            retVal = TpmEcc_SignGost3410512(bnR, bnS, E, bnD, digest, rand);
+            break;
+#  endif
+// CHANGES END
+
         default:
             break;
     }
@@ -191,6 +205,16 @@ LIB_EXPORT TPM_RC CryptEccValidateSignature(
 #  if ALG_SM2
         case TPM_ALG_SM2:
 #  endif
+
+// [GOST] CHANGES START
+#  if ALG_GOST3410_256
+        case TPM_ALG_GOST3410_256:
+#  endif
+#  if ALG_GOST3410_512
+        case TPM_ALG_GOST3410_512:
+#  endif
+// CHANGES END
+
             break;
         default:
             ERROR_EXIT(TPM_RC_SCHEME);
@@ -226,6 +250,20 @@ LIB_EXPORT TPM_RC CryptEccValidateSignature(
             retVal = TpmEcc_ValidateSignatureEcSm2(bnR, bnS, E, ecQ, digest);
             break;
 #  endif
+
+// [GOST] CHANGES START
+#  if ALG_GOST3410_256
+        case TPM_ALG_GOST3410_256:
+            retVal = TpmEcc_ValidateSignatureGost3410256(bnR, bnS, E, ecQ, digest);
+            break;
+#  endif
+#  if ALG_GOST3410_512
+        case TPM_ALG_GOST3410_512:
+            retVal = TpmEcc_ValidateSignatureGost3410512(bnR, bnS, E, ecQ, digest);
+            break;
+#  endif
+// CHANGES END
+
         default:
             FAIL(FATAL_ERROR_INTERNAL);
     }

@@ -86,6 +86,8 @@
 #ifdef MATH_LIB_OSSL
 #  include "BnToOsslMath_fp.h"
 
+#include <openssl/err.h>
+
 //** Functions
 
 //*** OsslToTpmBn()

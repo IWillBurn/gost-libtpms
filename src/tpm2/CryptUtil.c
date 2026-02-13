@@ -1275,6 +1275,16 @@ CryptGetSignHashAlg(TPMT_SIGNATURE* auth  // IN: signature
 #  if ALG_ECSCHNORR
         case TPM_ALG_ECSCHNORR:
 #  endif
+
+// [GOST] CHANGES START
+#  if ALG_GOST3410_256
+        case TPM_ALG_GOST3410_256:
+#  endif
+#  if ALG_GOST3410_512
+        case TPM_ALG_GOST3410_512:
+#  endif
+// CHANGES END
+
             //all ECC signatures look the same
             return auth->signature.ecdsa.hash;
 
@@ -1361,6 +1371,15 @@ BOOL CryptIsAsymSignScheme(TPMI_ALG_PUBLIC      publicType,  // IN: Type of the 
 #  if ALG_SM2  // SM2 is optional
                 case TPM_ALG_SM2:
 #  endif
+
+// [GOST] CHANGES START
+#  if ALG_GOST3410_256
+        case TPM_ALG_GOST3410_256:
+#  endif
+#  if ALG_GOST3410_512
+        case TPM_ALG_GOST3410_512:
+#  endif
+// CHANGES END
                     break;
                 default:
                     isSignScheme = FALSE;

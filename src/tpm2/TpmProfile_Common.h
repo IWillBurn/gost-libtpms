@@ -198,6 +198,11 @@
 #define     ALG_EDDSA                       (NO  * ALG_ECC)
 #define     ALG_EDDSA_PH                    (NO  * ALG_ECC)
 
+// [GOST] CHANGES START
+#define ALG_GOST3410_256                    (YES * ALG_ECC)
+#define ALG_GOST3410_512                    (YES * ALG_ECC)
+// CHANGES END
+
 #define     ECC_NIST_P192                   (YES * ALG_ECC)
 #define     ECC_NIST_P224                   (YES * ALG_ECC)
 #define     ECC_NIST_P256                   (YES * ALG_ECC)
@@ -212,6 +217,17 @@
 #define     ECC_BP_P512_R1                  (NO * ALG_ECC)
 #define     ECC_CURVE_25519                 (NO * ALG_ECC)
 #define     ECC_CURVE_448                   (NO * ALG_ECC)
+
+// [GOST] CHANGES START
+#define ECC_TC26_GOST3410_256_PARAM_SET_A   (YES * ALG_ECC)
+#define ECC_TC26_GOST3410_256_PARAM_SET_B   (YES * ALG_ECC)
+#define ECC_TC26_GOST3410_256_PARAM_SET_C   (YES * ALG_ECC)
+#define ECC_TC26_GOST3410_256_PARAM_SET_D   (YES * ALG_ECC)
+
+#define ECC_TC26_GOST3410_512_PARAM_SET_A   (YES * ALG_ECC)
+#define ECC_TC26_GOST3410_512_PARAM_SET_B   (YES * ALG_ECC)
+#define ECC_TC26_GOST3410_512_PARAM_SET_C   (YES * ALG_ECC)
+// CHANGES END
 
 //***********************************************
 // Defines for Hash/XOF Algorithms

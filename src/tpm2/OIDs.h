@@ -354,6 +354,50 @@ MAKE_OID(_ECC_SM2_P256);  // Don't know where I found this OID. It needs checkin
 #    define OID_ECC_BN_P256 NULL
 #  endif  // ECC_BN_P256
 
+// [GOST] CHANGES START
+#  define OID_ECC_TC26_GOST3410_256_PARAM_SET_A_VALUE \
+      0x06, 0x09, 0x2A, 0x85, 0x03, 0x07, 0x01, 0x02, 0x01, 0x01, 0x01,
+#  if ECC_TC26_GOST3410_256_PARAM_SET_A
+MAKE_OID(_ECC_TC26_GOST3410_256_PARAM_SET_A);   // (1.2.643.7.1.2.1.1.1) 'id-tc26-gost-3410-12-512-paramSetA'
+#  endif                                        // OID_ECC_TC26_GOST3410_256_PARAM_SET_A_VALUE
+
+#  define OID_ECC_TC26_GOST3410_256_PARAM_SET_B_VALUE \
+      0x06, 0x09, 0x2A, 0x85, 0x03, 0x07, 0x01, 0x02, 0x01, 0x01, 0x02,
+#  if ECC_TC26_GOST3410_256_PARAM_SET_B
+MAKE_OID(_ECC_TC26_GOST3410_256_PARAM_SET_B);   // (1.2.643.7.1.2.1.1.2) 'id-tc26-gost-3410-12-512-paramSetB'
+#  endif                                        // OID_ECC_TC26_GOST3410_256_PARAM_SET_B_VALUE
+
+#  define OID_ECC_TC26_GOST3410_256_PARAM_SET_C_VALUE \
+      0x06, 0x09, 0x2A, 0x85, 0x03, 0x07, 0x01, 0x02, 0x01, 0x01, 0x03,
+#  if ECC_TC26_GOST3410_256_PARAM_SET_C
+MAKE_OID(_ECC_TC26_GOST3410_256_PARAM_SET_C);   // (1.2.643.7.1.2.1.1.3) 'id-tc26-gost-3410-12-512-paramSetC'
+#  endif                                        // OID_ECC_TC26_GOST3410_256_PARAM_SET_C_VALUE
+
+#  define OID_ECC_TC26_GOST3410_256_PARAM_SET_D_VALUE \
+      0x06, 0x09, 0x2A, 0x85, 0x03, 0x07, 0x01, 0x02, 0x01, 0x01, 0x04,
+#  if ECC_TC26_GOST3410_256_PARAM_SET_D
+MAKE_OID(_ECC_TC26_GOST3410_256_PARAM_SET_D);   // (1.2.643.7.1.2.1.1.4) 'id-tc26-gost-3410-12-512-paramSetD'
+#  endif                                        // OID_ECC_TC26_GOST3410_256_PARAM_SET_D_VALUE
+
+#  define OID_ECC_TC26_GOST3410_512_PARAM_SET_A_VALUE \
+      0x06, 0x09, 0x2A, 0x85, 0x03, 0x07, 0x01, 0x02, 0x01, 0x02, 0x01,
+#  if ECC_TC26_GOST3410_512_PARAM_SET_A
+MAKE_OID(_ECC_TC26_GOST3410_512_PARAM_SET_A);   // (1.2.643.7.1.2.1.2.1) 'id-tc26-gost-3410-12-512-paramSetA'
+#  endif                                        // OID_ECC_TC26_GOST3410_512_PARAM_SET_A_VALUE
+
+#  define OID_ECC_TC26_GOST3410_512_PARAM_SET_B_VALUE \
+      0x06, 0x09, 0x2A, 0x85, 0x03, 0x07, 0x01, 0x02, 0x01, 0x02, 0x02,
+#  if ECC_TC26_GOST3410_512_PARAM_SET_B
+MAKE_OID(_ECC_TC26_GOST3410_512_PARAM_SET_B);   // (1.2.643.7.1.2.1.2.2) 'id-tc26-gost-3410-12-512-paramSetA'
+#  endif                                        // OID_ECC_TC26_GOST3410_512_PARAM_SET_B_VALUE
+
+#  define OID_ECC_TC26_GOST3410_512_PARAM_SET_C_VALUE \
+      0x06, 0x09, 0x2A, 0x85, 0x03, 0x07, 0x01, 0x02, 0x01, 0x02, 0x03,
+#  if ECC_TC26_GOST3410_512_PARAM_SET_C
+MAKE_OID(_ECC_TC26_GOST3410_512_PARAM_SET_C);   // (1.2.643.7.1.2.1.2.3) 'id-tc26-gost-3410-12-512-paramSetA'
+#  endif                                        // OID_ECC_TC26_GOST3410_512_PARAM_SET_C_VALUE
+// CHANGES END
+
 #endif  // ALG_ECC
 
 #define OID_SIZE(OID) (OID[1] + 2)

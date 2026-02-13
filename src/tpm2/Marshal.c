@@ -1519,6 +1519,23 @@ TPMS_SIG_SCHEME_ECDAA_Marshal(TPMS_SIG_SCHEME_ECDAA *source, BYTE **buffer, INT3
     return written;
 }
 
+// [GOST] CHANGES START
+UINT16
+TPMS_SIG_SCHEME_GOST3410_256_Marshal(TPMS_SIG_SCHEME_GOST3410_256 *source, BYTE **buffer, INT32 *size)
+{
+    UINT16 written = 0;
+    written += TPMS_SCHEME_HASH_Marshal(source, buffer, size);
+    return written;
+}
+UINT16
+TPMS_SIG_SCHEME_GOST3410_512_Marshal(TPMS_SIG_SCHEME_GOST3410_512 *source, BYTE **buffer, INT32 *size)
+{
+    UINT16 written = 0;
+    written += TPMS_SCHEME_HASH_Marshal(source, buffer, size);
+    return written;
+}
+// CHANGES END
+
 /* Table 2:153 - Definition of Types for Encryption Schemes (TypedefTable()) */
 
 UINT16
@@ -1711,6 +1728,20 @@ TPMU_ASYM_SCHEME_Marshal(TPMU_ASYM_SCHEME  *source, BYTE **buffer, INT32 *size, 
 	written += TPMS_SIG_SCHEME_ECSCHNORR_Marshal(&source->ecschnorr, buffer, size);
 	break;
 #endif
+
+// [GOST] CHANGES START
+#if ALG_GOST3410_256
+      case TPM_ALG_GOST3410_256:
+	written += TPMS_SIG_SCHEME_GOST3410_256_Marshal(&source->gost3410_256, buffer, size);
+	break;
+#endif
+#if ALG_GOST3410_512
+      case TPM_ALG_GOST3410_512:
+	written += TPMS_SIG_SCHEME_GOST3410_512_Marshal(&source->gost3410_512, buffer, size);
+	break;
+#endif
+// CHANGES END
+
 #if ALG_RSAES
       case TPM_ALG_RSAES:
 	written += TPMS_ENC_SCHEME_RSAES_Marshal(&source->rsaes, buffer, size);
@@ -1953,6 +1984,25 @@ TPMS_SIGNATURE_ECSCHNORR_Marshal(TPMS_SIGNATURE_ECSCHNORR *source, BYTE **buffer
     return written;
 }
 
+// [GOST] CHANGES START
+UINT16
+TPMS_SIGNATURE_GOST3410_256_Marshal(TPMS_SIGNATURE_GOST3410_256 *source, BYTE **buffer, INT32 *size)
+{
+    UINT16 written = 0;
+    written += TPMS_SIGNATURE_ECC_Marshal(source, buffer, size);
+    return written;
+}
+
+UINT16
+TPMS_SIGNATURE_GOST3410_512_Marshal(TPMS_SIGNATURE_GOST3410_512 *source, BYTE **buffer, INT32 *size)
+{
+    UINT16 written = 0;
+    written += TPMS_SIGNATURE_ECC_Marshal(source, buffer, size);
+    return written;
+}
+// CHANGES END
+
+
 /* Table 2:179 - Definition of TPMU_SIGNATURE Union (StructuresTable()) */
 UINT16
 TPMU_SIGNATURE_Marshal(TPMU_SIGNATURE *source, BYTE **buffer, INT32 *size, UINT32 selector)
@@ -1990,6 +2040,21 @@ TPMU_SIGNATURE_Marshal(TPMU_SIGNATURE *source, BYTE **buffer, INT32 *size, UINT3
 	written += TPMS_SIGNATURE_ECSCHNORR_Marshal(&source->ecschnorr, buffer, size);
 	break;
 #endif
+
+// [GOST] CHANGES START
+#if ALG_GOST3410_256
+      case TPM_ALG_GOST3410_256:
+	written += TPMS_SIGNATURE_GOST3410_256_Marshal(&source->gost3410_256, buffer, size);
+	break;
+#endif
+
+#if ALG_GOST3410_512
+      case TPM_ALG_GOST3410_512:
+	written += TPMS_SIGNATURE_GOST3410_512_Marshal(&source->gost3410_512, buffer, size);
+	break;
+#endif
+// CHANGES END
+
 #if ALG_HMAC
       case TPM_ALG_HMAC:
 	written += TPMT_HA_Marshal(&source->hmac, buffer, size);

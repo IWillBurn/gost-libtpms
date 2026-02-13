@@ -755,6 +755,63 @@ static TPM_RC TestEccSignAndVerify(TPM_ALG_ID scheme, ALGORITHM_VECTOR* toTest)
     return TPM_RC_SUCCESS;
 }
 
+// [GOST] CHANGES START
+//*** TestGOST3410SignAndVerify()
+static TPM_RC TestGOST3410SignAndVerify(TPM_ALG_ID scheme, ALGORITHM_VECTOR* toTest)
+{
+    static OBJECT          testObject;
+    static TPMT_SIGNATURE  testSig;
+    static TPMT_ECC_SCHEME eccScheme;
+
+    testSig.sigAlg                   = scheme;
+    testSig.signature.ecdsa.hash     = DEFAULT_TEST_HASH;
+
+    eccScheme.scheme                 = scheme;
+    eccScheme.details.anySig.hashAlg = DEFAULT_TEST_HASH;
+
+    CLEAR_BOTH(scheme);
+
+    TEST_DEFAULT_TEST_HASH(toTest);
+
+    switch(scheme)
+    {
+        case TPM_ALG_GOST3410_256:
+            MemoryCopy2B(&testObject.sensitive.sensitive.ecc.b,
+                &c_testKeyGOST3410256_ds.b,
+                sizeof(testObject.sensitive.sensitive.ecc.t.buffer));
+            LoadEccPoint(&testObject.publicArea.unique.ecc, &c_testKeyGOST3410256_QsX, &c_testKeyGOST3410256_QsY);
+            testObject.publicArea.parameters.eccDetail.curveID = c_testCurveGOST3410256;
+            break;
+        case TPM_ALG_GOST3410_512:
+            MemoryCopy2B(&testObject.sensitive.sensitive.ecc.b,
+                &c_testKeyGOST3410512_ds.b,
+                sizeof(testObject.sensitive.sensitive.ecc.t.buffer));
+            LoadEccPoint(&testObject.publicArea.unique.ecc, &c_testKeyGOST3410512_QsX, &c_testKeyGOST3410512_QsY);
+            testObject.publicArea.parameters.eccDetail.curveID = c_testCurveGOST3410512;
+            break;
+        default:
+            SELF_TEST_FAILURE;
+            break;
+    }
+    // Now sign and verify some data
+    if(TPM_RC_SUCCESS
+       != CryptEccSign(
+           &testSig, &testObject, (TPM2B_DIGEST*)&c_testKeyGOST3410256Value, &eccScheme, NULL)) {
+        SELF_TEST_FAILURE;
+    }
+    CHECK_CANCELED;
+
+    if(TPM_RC_SUCCESS
+       != CryptEccValidateSignature(
+           &testSig, &testObject, (TPM2B_DIGEST*)&c_testKeyGOST3410256Value))
+        SELF_TEST_FAILURE;
+
+    CHECK_CANCELED;
+
+    return TPM_RC_SUCCESS;
+}
+// CHANGES END
+
 //*** TestKDFa()
 static TPM_RC TestKDFa(ALGORITHM_VECTOR* toTest)
 {
@@ -805,6 +862,14 @@ static TPM_RC TestEcc(TPM_ALG_ID alg, ALGORITHM_VECTOR* toTest)
         case TPM_ALG_SM2:
             result = TestEccSignAndVerify(alg, toTest);
             break;
+        
+        // [GOST] CHANGES START
+        case TPM_ALG_GOST3410_256:
+        case TPM_ALG_GOST3410_512:
+            result = TestGOST3410SignAndVerify(alg, toTest);
+            break;
+        // CHANGES END
+
         default:
             SELF_TEST_FAILURE;
             break;
@@ -1001,6 +1066,10 @@ TestAlgorithm(TPM_ALG_ID alg, ALGORITHM_VECTOR* toTest)
             case TPM_ALG_ECDSA:
             case TPM_ALG_ECDH:
             case TPM_ALG_ECSCHNORR:
+            // [GOST] CHANGES START
+            case TPM_ALG_GOST3410_256:
+            case TPM_ALG_GOST3410_512:
+            // CHANGES END
                 //            case TPM_ALG_SM2:
                 if(doTest)
                     result = TestEcc(alg, toTest);

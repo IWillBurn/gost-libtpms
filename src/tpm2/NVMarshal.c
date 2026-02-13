@@ -4253,6 +4253,12 @@ static const struct _entry {
     { COMPILE_CONSTANT(ALG_SM2, LE) },
     { COMPILE_CONSTANT(ALG_ECSCHNORR, EQ) },
     { COMPILE_CONSTANT(ALG_ECMQV, LE) },
+
+// [GOST] CHANGES START
+    { COMPILE_CONSTANT(ALG_GOST3410_256, EQ) },
+    { COMPILE_CONSTANT(ALG_GOST3410_512, EQ) },
+// CHANGES END
+
     { COMPILE_CONSTANT(ALG_SYMCIPHER, EQ) },
     { COMPILE_CONSTANT(ALG_KDF1_SP800_56A, EQ) },
     { COMPILE_CONSTANT(ALG_KDF2, LE) },
@@ -4284,6 +4290,17 @@ static const struct _entry {
     { COMPILE_CONSTANT(ECC_BN_P256, LE) },
     { COMPILE_CONSTANT(ECC_BN_P638, LE) },
     { COMPILE_CONSTANT(ECC_SM2_P256, LE) },
+
+// [GOST] CHANGES START
+    { COMPILE_CONSTANT(ECC_TC26_GOST3410_256_PARAM_SET_A, LE) },
+    { COMPILE_CONSTANT(ECC_TC26_GOST3410_256_PARAM_SET_B, LE) },
+    { COMPILE_CONSTANT(ECC_TC26_GOST3410_256_PARAM_SET_C, LE) },
+    { COMPILE_CONSTANT(ECC_TC26_GOST3410_256_PARAM_SET_D, LE) },
+    { COMPILE_CONSTANT(ECC_TC26_GOST3410_512_PARAM_SET_A, LE) },
+    { COMPILE_CONSTANT(ECC_TC26_GOST3410_512_PARAM_SET_B, LE) },
+    { COMPILE_CONSTANT(ECC_TC26_GOST3410_512_PARAM_SET_C, LE) },
+// CHANGES END
+    
     { COMPILE_CONSTANT(MAX_ECC_KEY_BITS, LE) },
     { COMPILE_CONSTANT(4, EQ) }, /* was: HASH_ALIGNMENT, which is not relevant */
     { COMPILE_CONSTANT(SYM_ALIGNMENT, EQ) },
@@ -4462,7 +4479,7 @@ PACompileConstants_Unmarshal(BYTE **buffer, INT32 *size)
             break;
         case 3:
             /* PA_COMPILE_CONSTANTS_VERSION 3 had 104 entries */
-            exp_array_size = 124; // [GOST] +4 alg
+            exp_array_size = 133; // [GOST] +6 alg, +7 curve
             break;
         default:
             /* we don't support anything newer - no downgrade */

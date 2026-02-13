@@ -121,20 +121,53 @@
 #  define CURVE_448_ID       TPM_ECC_CURVE_448
 #  define CURVE_448_KEY_SIZE 448
 
+// [GOST] CHANGES START
+#  define ECC_TC26_GOST3410_256_PARAM_SET_A_ID       TPM_ECC_TC26_GOST3410_256_PARAM_SET_A
+#  define ECC_TC26_GOST3410_256_PARAM_SET_A_KEY_SIZE 256
+
+#  define ECC_TC26_GOST3410_256_PARAM_SET_B_ID       TPM_ECC_TC26_GOST3410_256_PARAM_SET_B
+#  define ECC_TC26_GOST3410_256_PARAM_SET_B_KEY_SIZE 256
+
+#  define ECC_TC26_GOST3410_256_PARAM_SET_C_ID       TPM_ECC_TC26_GOST3410_256_PARAM_SET_C
+#  define ECC_TC26_GOST3410_256_PARAM_SET_C_KEY_SIZE 256
+
+#  define ECC_TC26_GOST3410_256_PARAM_SET_D_ID       TPM_ECC_TC26_GOST3410_256_PARAM_SET_D
+#  define ECC_TC26_GOST3410_256_PARAM_SET_D_KEY_SIZE 256
+
+#  define ECC_TC26_GOST3410_512_PARAM_SET_A_ID       TPM_ECC_TC26_GOST3410_512_PARAM_SET_A
+#  define ECC_TC26_GOST3410_512_PARAM_SET_A_KEY_SIZE 512
+
+#  define ECC_TC26_GOST3410_512_PARAM_SET_B_ID       TPM_ECC_TC26_GOST3410_512_PARAM_SET_B
+#  define ECC_TC26_GOST3410_512_PARAM_SET_B_KEY_SIZE 512
+
+#  define ECC_TC26_GOST3410_512_PARAM_SET_C_ID       TPM_ECC_TC26_GOST3410_512_PARAM_SET_C
+#  define ECC_TC26_GOST3410_512_PARAM_SET_C_KEY_SIZE 512
+// CHANGES END
+
 // Derived ECC Value
-#  define ECC_CURVES                                                       \
-      {                                                                    \
-          TPM_ECC_NIST_P192, TPM_ECC_NIST_P224, TPM_ECC_NIST_P256,         \
-              TPM_ECC_NIST_P384, TPM_ECC_NIST_P521, TPM_ECC_BN_P256,       \
-              TPM_ECC_BN_P638, TPM_ECC_SM2_P256, TPM_ECC_BP_P256_R1,       \
-              TPM_ECC_BP_P384_R1, TPM_ECC_BP_P512_R1, TPM_ECC_CURVE_25519, \
-              TPM_ECC_CURVE_448                                            \
+// [GOST] Add ECC_TC26_GOST3410
+#  define ECC_CURVES                                                                        \
+      {                                                                                     \
+          TPM_ECC_NIST_P192, TPM_ECC_NIST_P224, TPM_ECC_NIST_P256,                          \
+              TPM_ECC_NIST_P384, TPM_ECC_NIST_P521, TPM_ECC_BN_P256,                        \
+              TPM_ECC_BN_P638, TPM_ECC_SM2_P256, TPM_ECC_BP_P256_R1,                        \
+              TPM_ECC_BP_P384_R1, TPM_ECC_BP_P512_R1, TPM_ECC_CURVE_25519,                  \
+              TPM_ECC_CURVE_448,                                                            \
+              TPM_ECC_TC26_GOST3410_256_PARAM_SET_A, TPM_ECC_TC26_GOST3410_256_PARAM_SET_B, \
+              TPM_ECC_TC26_GOST3410_256_PARAM_SET_C, TPM_ECC_TC26_GOST3410_256_PARAM_SET_D, \
+              TPM_ECC_TC26_GOST3410_512_PARAM_SET_A, TPM_ECC_TC26_GOST3410_512_PARAM_SET_B, \
+              TPM_ECC_TC26_GOST3410_512_PARAM_SET_C                                         \
       }
 
+// [GOST] Add ECC_TC26_GOST3410
 #  define ECC_CURVE_COUNT                                                            \
       (ECC_NIST_P192 + ECC_NIST_P224 + ECC_NIST_P256 + ECC_NIST_P384 + ECC_NIST_P521 \
        + ECC_BN_P256 + ECC_BN_P638 + ECC_SM2_P256 + ECC_BP_P256_R1 + ECC_BP_P384_R1  \
-       + ECC_BP_P512_R1 + ECC_CURVE_25519 + ECC_CURVE_448)
+       + ECC_BP_P512_R1 + ECC_CURVE_25519 + ECC_CURVE_448                            \
+       + ECC_TC26_GOST3410_256_PARAM_SET_A + ECC_TC26_GOST3410_256_PARAM_SET_B       \
+       + ECC_TC26_GOST3410_256_PARAM_SET_C + ECC_TC26_GOST3410_256_PARAM_SET_D       \
+       + ECC_TC26_GOST3410_512_PARAM_SET_A + ECC_TC26_GOST3410_512_PARAM_SET_B       \
+       + ECC_TC26_GOST3410_512_PARAM_SET_C)                                          \
 
 // Avoid expanding MAX_ECC_KEY_BITS into a long expression, the compiler slows down
 // and on some compilers runs out of heap space.
@@ -172,6 +205,24 @@
 // 192
 #  elif ECC_NIST_P192
 #    define MAX_ECC_KEY_BITS NIST_P192_KEY_SIZE
+
+// [GOST] CHANGES START
+#  elif ECC_TC26_GOST3410_256_PARAM_SET_A
+#    define MAX_ECC_KEY_BITS ECC_TC26_GOST3410_256_PARAM_SET_A_KEY_SIZE
+#  elif ECC_TC26_GOST3410_256_PARAM_SET_B
+#    define MAX_ECC_KEY_BITS ECC_TC26_GOST3410_256_PARAM_SET_B_KEY_SIZE
+#  elif ECC_TC26_GOST3410_256_PARAM_SET_C
+#    define MAX_ECC_KEY_BITS ECC_TC26_GOST3410_256_PARAM_SET_C_KEY_SIZE
+#  elif ECC_TC26_GOST3410_256_PARAM_SET_D
+#    define MAX_ECC_KEY_BITS ECC_TC26_GOST3410_256_PARAM_SET_D_KEY_SIZE
+#  elif ECC_TC26_GOST3410_512_PARAM_SET_A
+#    define MAX_ECC_KEY_BITS ECC_TC26_GOST3410_512_PARAM_SET_A_KEY_SIZE
+#  elif ECC_TC26_GOST3410_512_PARAM_SET_B
+#    define MAX_ECC_KEY_BITS ECC_TC26_GOST3410_512_PARAM_SET_B_KEY_SIZE
+#  elif ECC_TC26_GOST3410_512_PARAM_SET_C
+#    define MAX_ECC_KEY_BITS ECC_TC26_GOST3410_512_PARAM_SET_C_KEY_SIZE
+// CHANGES END
+
 #  else
 #    error ALG_ECC enabled, but no ECC Curves Enabled
 #  endif

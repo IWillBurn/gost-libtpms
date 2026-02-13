@@ -202,7 +202,6 @@ TPM2_Sign(Sign_In*  in,  // IN: input parameter list
 	       != CryptHashGetDigestSize(in->inScheme.details.any.hashAlg))
 		return TPM_RCS_SIZE + RC_Sign_digest;
 	}
-
     // Command Output
     // Sign the hash. A TPM_RC_VALUE or TPM_RC_SCHEME
     // error may be returned at this point

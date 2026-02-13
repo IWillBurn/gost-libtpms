@@ -91,6 +91,11 @@
 #  define TO_ECC_256(a, b, c, d)                   d, c, b, a
 #  define TO_ECC_384(a, b, c, d, e, f)             f, e, d, c, b, a
 #  define TO_ECC_528(a, b, c, d, e, f, g, h, i)    i, h, g, f, e, d, c, b, a
+
+// [GOST] CHANGES START
+#  define TO_ECC_512(a,b,c,d,e,f,g,h) h, g, f, e, d, c, b, a
+// CHANGES END
+
 #  define TO_ECC_640(a, b, c, d, e, f, g, h, i, j) j, i, h, g, f, e, d, c, b, a
 
 #  define BN_MIN_ALLOC(bytes) \
@@ -204,6 +209,92 @@ const TPMBN_ECC_CURVE_CONSTANTS SM2_P256 = {TPM_ECC_SM2_P256,
                                              (bigNum)&SM2_P256_gZ}};
 #  endif  // ECC_SM2_P256
 
+// [GOST] CHANGES START
+#  if ECC_TC26_GOST3410_256_PARAM_SET_A
+const TPMBN_ECC_CURVE_CONSTANTS TC26_GOST3410_256_PARAM_SET_A = {TPM_ECC_TC26_GOST3410_256_PARAM_SET_A,
+                                                                (bigNum)&TC26_GOST3410_256_PARAM_SET_A_p,
+                                                                (bigNum)&TC26_GOST3410_256_PARAM_SET_A_n,
+                                                                (bigNum)&TC26_GOST3410_256_PARAM_SET_A_h,
+                                                                (bigNum)&TC26_GOST3410_256_PARAM_SET_A_a,
+                                                                (bigNum)&TC26_GOST3410_256_PARAM_SET_A_b,
+                                                                {(bigNum)&TC26_GOST3410_256_PARAM_SET_A_gX,
+                                                                (bigNum)&TC26_GOST3410_256_PARAM_SET_A_gY,
+                                                                (bigNum)&TC26_GOST3410_256_PARAM_SET_A_gZ}};
+#  endif  // ECC_TC26_GOST3410_256_PARAM_SET_A
+
+#  if ECC_TC26_GOST3410_256_PARAM_SET_B
+const TPMBN_ECC_CURVE_CONSTANTS TC26_GOST3410_256_PARAM_SET_B = {TPM_ECC_TC26_GOST3410_256_PARAM_SET_B,
+                                                                (bigNum)&TC26_GOST3410_256_PARAM_SET_B_p,
+                                                                (bigNum)&TC26_GOST3410_256_PARAM_SET_B_n,
+                                                                (bigNum)&TC26_GOST3410_256_PARAM_SET_B_h,
+                                                                (bigNum)&TC26_GOST3410_256_PARAM_SET_B_a,
+                                                                (bigNum)&TC26_GOST3410_256_PARAM_SET_B_b,
+                                                                {(bigNum)&TC26_GOST3410_256_PARAM_SET_B_gX,
+                                                                (bigNum)&TC26_GOST3410_256_PARAM_SET_B_gY,
+                                                                (bigNum)&TC26_GOST3410_256_PARAM_SET_B_gZ}};
+#  endif  // ECC_TC26_GOST3410_256_PARAM_SET_B
+
+#  if ECC_TC26_GOST3410_256_PARAM_SET_C
+const TPMBN_ECC_CURVE_CONSTANTS TC26_GOST3410_256_PARAM_SET_C = {TPM_ECC_TC26_GOST3410_256_PARAM_SET_C,
+                                                                (bigNum)&TC26_GOST3410_256_PARAM_SET_C_p,
+                                                                (bigNum)&TC26_GOST3410_256_PARAM_SET_C_n,
+                                                                (bigNum)&TC26_GOST3410_256_PARAM_SET_C_h,
+                                                                (bigNum)&TC26_GOST3410_256_PARAM_SET_C_a,
+                                                                (bigNum)&TC26_GOST3410_256_PARAM_SET_C_b,
+                                                                {(bigNum)&TC26_GOST3410_256_PARAM_SET_C_gX,
+                                                                (bigNum)&TC26_GOST3410_256_PARAM_SET_C_gY,
+                                                                (bigNum)&TC26_GOST3410_256_PARAM_SET_C_gZ}};
+#  endif  // ECC_TC26_GOST3410_256_PARAM_SET_C
+
+#  if ECC_TC26_GOST3410_256_PARAM_SET_D
+const TPMBN_ECC_CURVE_CONSTANTS TC26_GOST3410_256_PARAM_SET_D = {TPM_ECC_TC26_GOST3410_256_PARAM_SET_D,
+                                                                (bigNum)&TC26_GOST3410_256_PARAM_SET_D_p,
+                                                                (bigNum)&TC26_GOST3410_256_PARAM_SET_D_n,
+                                                                (bigNum)&TC26_GOST3410_256_PARAM_SET_D_h,
+                                                                (bigNum)&TC26_GOST3410_256_PARAM_SET_D_a,
+                                                                (bigNum)&TC26_GOST3410_256_PARAM_SET_D_b,
+                                                                {(bigNum)&TC26_GOST3410_256_PARAM_SET_D_gX,
+                                                                (bigNum)&TC26_GOST3410_256_PARAM_SET_D_gY,
+                                                                (bigNum)&TC26_GOST3410_256_PARAM_SET_D_gZ}};
+#  endif  // ECC_TC26_GOST3410_256_PARAM_SET_D
+
+#  if ECC_TC26_GOST3410_512_PARAM_SET_A
+const TPMBN_ECC_CURVE_CONSTANTS TC26_GOST3410_512_PARAM_SET_A = {TPM_ECC_TC26_GOST3410_512_PARAM_SET_A,
+                                                                (bigNum)&TC26_GOST3410_512_PARAM_SET_A_p,
+                                                                (bigNum)&TC26_GOST3410_512_PARAM_SET_A_n,
+                                                                (bigNum)&TC26_GOST3410_512_PARAM_SET_A_h,
+                                                                (bigNum)&TC26_GOST3410_512_PARAM_SET_A_a,
+                                                                (bigNum)&TC26_GOST3410_512_PARAM_SET_A_b,
+                                                                {(bigNum)&TC26_GOST3410_512_PARAM_SET_A_gX,
+                                                                (bigNum)&TC26_GOST3410_512_PARAM_SET_A_gY,
+                                                                (bigNum)&TC26_GOST3410_512_PARAM_SET_A_gZ}};
+#  endif  // ECC_TC26_GOST3410_512_PARAM_SET_A
+
+#  if ECC_TC26_GOST3410_512_PARAM_SET_B
+const TPMBN_ECC_CURVE_CONSTANTS TC26_GOST3410_512_PARAM_SET_B = {TPM_ECC_TC26_GOST3410_512_PARAM_SET_B,
+                                                                (bigNum)&TC26_GOST3410_512_PARAM_SET_B_p,
+                                                                (bigNum)&TC26_GOST3410_512_PARAM_SET_B_n,
+                                                                (bigNum)&TC26_GOST3410_512_PARAM_SET_B_h,
+                                                                (bigNum)&TC26_GOST3410_512_PARAM_SET_B_a,
+                                                                (bigNum)&TC26_GOST3410_512_PARAM_SET_B_b,
+                                                                {(bigNum)&TC26_GOST3410_512_PARAM_SET_B_gX,
+                                                                (bigNum)&TC26_GOST3410_512_PARAM_SET_B_gY,
+                                                                (bigNum)&TC26_GOST3410_512_PARAM_SET_B_gZ}};
+#  endif  // ECC_TC26_GOST3410_256_PARAM_SET_B
+
+#  if ECC_TC26_GOST3410_512_PARAM_SET_C
+const TPMBN_ECC_CURVE_CONSTANTS TC26_GOST3410_512_PARAM_SET_C = {TPM_ECC_TC26_GOST3410_512_PARAM_SET_C,
+                                                                (bigNum)&TC26_GOST3410_512_PARAM_SET_C_p,
+                                                                (bigNum)&TC26_GOST3410_512_PARAM_SET_C_n,
+                                                                (bigNum)&TC26_GOST3410_512_PARAM_SET_C_h,
+                                                                (bigNum)&TC26_GOST3410_512_PARAM_SET_C_a,
+                                                                (bigNum)&TC26_GOST3410_512_PARAM_SET_C_b,
+                                                                {(bigNum)&TC26_GOST3410_512_PARAM_SET_C_gX,
+                                                                (bigNum)&TC26_GOST3410_512_PARAM_SET_C_gY,
+                                                                (bigNum)&TC26_GOST3410_512_PARAM_SET_C_gZ}};
+#  endif  // ECC_TC26_GOST3410_256_PARAM_SET_C
+// CHANGES END
+
 #  define comma
 const TPMBN_ECC_CURVE_CONSTANTS* bnEccCurveData[] = {
 #  if ECC_NIST_P192
@@ -230,6 +321,31 @@ const TPMBN_ECC_CURVE_CONSTANTS* bnEccCurveData[] = {
 #  if ECC_SM2_P256
     &SM2_P256,
 #  endif
+
+// [GOST] CHANGES START
+#  if ECC_TC26_GOST3410_256_PARAM_SET_A
+    &TC26_GOST3410_256_PARAM_SET_A,
+#  endif
+#  if ECC_TC26_GOST3410_256_PARAM_SET_B
+    &TC26_GOST3410_256_PARAM_SET_B,
+#  endif
+#  if ECC_TC26_GOST3410_256_PARAM_SET_C
+    &TC26_GOST3410_256_PARAM_SET_C,
+#  endif
+#  if ECC_TC26_GOST3410_256_PARAM_SET_D
+    &TC26_GOST3410_256_PARAM_SET_D,
+#  endif
+#  if ECC_TC26_GOST3410_512_PARAM_SET_A
+    &TC26_GOST3410_512_PARAM_SET_A,
+#  endif
+#  if ECC_TC26_GOST3410_512_PARAM_SET_B
+    &TC26_GOST3410_512_PARAM_SET_B,
+#  endif
+#  if ECC_TC26_GOST3410_512_PARAM_SET_C
+    &TC26_GOST3410_512_PARAM_SET_C,
+#  endif
+// CHANGES END
+
 };
 
 MUST_BE((sizeof(bnEccCurveData) / sizeof(bnEccCurveData[0])) == (ECC_CURVE_COUNT));

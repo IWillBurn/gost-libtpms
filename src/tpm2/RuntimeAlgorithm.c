@@ -111,6 +111,17 @@ static const struct KeySizes s_KeySizesECC[] = {
     { .enabled = ECC_NIST_P384, .size = 384, .stateFormatLevel = 1 },
     { .enabled = ECC_NIST_P521, .size = 521, .stateFormatLevel = 1 },
     { .enabled = ECC_BN_P638  , .size = 638, .stateFormatLevel = 1 },
+
+	// [GOST] CHANGES START
+	{ .enabled = ECC_TC26_GOST3410_256_PARAM_SET_A, .size = 256, .stateFormatLevel = 1 },
+	{ .enabled = ECC_TC26_GOST3410_256_PARAM_SET_B, .size = 256, .stateFormatLevel = 1 },
+	{ .enabled = ECC_TC26_GOST3410_256_PARAM_SET_C, .size = 256, .stateFormatLevel = 1 },
+	{ .enabled = ECC_TC26_GOST3410_256_PARAM_SET_D, .size = 256, .stateFormatLevel = 1 },
+	{ .enabled = ECC_TC26_GOST3410_512_PARAM_SET_A, .size = 512, .stateFormatLevel = 1 },
+	{ .enabled = ECC_TC26_GOST3410_512_PARAM_SET_B, .size = 512, .stateFormatLevel = 1 },
+	{ .enabled = ECC_TC26_GOST3410_512_PARAM_SET_C, .size = 512, .stateFormatLevel = 1 },
+	// CHANGES END
+
     { .enabled = false        , .size = 0  , .stateFormatLevel = 0 },
 };
 static const struct MinKeySize s_MinKeySizeHMAC[] = {
@@ -164,6 +175,12 @@ static const struct {
     [TPM_ALG_SM2] = SIGNING(ALG_SM2, "sm2", true, 1),
     [TPM_ALG_ECSCHNORR] = SIGNING(ALG_ECSCHNORR, "ecschnorr", true, 1),
     [TPM_ALG_ECMQV] = OTHER(ALG_ECMQV, "ecmqv", true, 1),
+
+	// [GOST] CHANGES START
+	[TPM_ALG_GOST3410_256] = SIGNING(ALG_GOST3410_256, "gost3410-256", true, 1),
+	[TPM_ALG_GOST3410_512] = SIGNING(ALG_GOST3410_512, "gost3410-512", true, 1),
+	// CHANGES END
+
     [TPM_ALG_KDF1_SP800_56A] = HASH(ALG_KDF1_SP800_56A, "kdf1-sp800-56a", false, 1),
     [TPM_ALG_KDF2] = HASH(ALG_KDF2, "kdf2", false, 1),
     [TPM_ALG_KDF1_SP800_108] = HASH(ALG_KDF1_SP800_108, "kdf1-sp800-108", false, 1),
@@ -199,6 +216,7 @@ static const struct {
     { .name = NAME, .canBeDisabled = CANDISABLE, .prefix = PREFIX }
     [RUNTIME_ALGORITHM_ECC_NIST_BIT] = ECC_SHORTCUT("ecc-nist", true, "ecc-nist-p"),
     [RUNTIME_ALGORITHM_ECC_BN_BIT] = ECC_SHORTCUT("ecc-bn", true, "ecc-bn-p"),
+	[RUNTIME_ALGORITHM_ECC_TC26_GOST3410_BIT] = ECC_SHORTCUT("ecc-tc26-gost3410", true, "ecc-tc26-gost3410"),
 };
 
 static const struct {
@@ -218,6 +236,16 @@ static const struct {
     [TPM_ECC_BN_P256] = ECC(ECC_BN_P256, "ecc-bn-p256", 256, true, 1),
     [TPM_ECC_BN_P638] = ECC(ECC_BN_P638, "ecc-bn-p638", 638, true, 1),
     [TPM_ECC_SM2_P256] = ECC(ECC_SM2_P256, "ecc-sm2-p256", 256, true, 1),
+
+	// [GOST] CHANGES START
+	[TPM_ECC_TC26_GOST3410_256_PARAM_SET_A] = ECC(ECC_TC26_GOST3410_256_PARAM_SET_A, "ecc-tc26-gost3410-256-params-set-a", 256, true, 1),
+	[TPM_ECC_TC26_GOST3410_256_PARAM_SET_B] = ECC(ECC_TC26_GOST3410_256_PARAM_SET_B, "ecc-tc26-gost3410-256-params-set-b", 256, true, 1),
+	[TPM_ECC_TC26_GOST3410_256_PARAM_SET_C] = ECC(ECC_TC26_GOST3410_256_PARAM_SET_C, "ecc-tc26-gost3410-256-params-set-c", 256, true, 1),
+	[TPM_ECC_TC26_GOST3410_256_PARAM_SET_D] = ECC(ECC_TC26_GOST3410_256_PARAM_SET_D, "ecc-tc26-gost3410-256-params-set-d", 256, true, 1),
+	[TPM_ECC_TC26_GOST3410_512_PARAM_SET_A] = ECC(ECC_TC26_GOST3410_512_PARAM_SET_A, "ecc-tc26-gost3410-512-params-set-a", 512, true, 1),
+	[TPM_ECC_TC26_GOST3410_512_PARAM_SET_B] = ECC(ECC_TC26_GOST3410_512_PARAM_SET_B, "ecc-tc26-gost3410-512-params-set-b", 512, true, 1),
+	[TPM_ECC_TC26_GOST3410_512_PARAM_SET_C] = ECC(ECC_TC26_GOST3410_512_PARAM_SET_C, "ecc-tc26-gost3410-512-params-set-c", 512, true, 1),
+	// CHANGES END
 };
 
 static const TPM_ALG_ID algsWithKeySizes[] = {

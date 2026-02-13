@@ -133,6 +133,7 @@ use_openssl_functions_ec=0
 use_openssl_functions_ecdsa=0
 use_openssl_functions_rsa=0
 use_openssl_functions_sskdf=0
+use_openssl_functions_gost3410=0
 AC_ARG_ENABLE(use-openssl-functions,
     AS_HELP_STRING([--disable-use-openssl-functions],
                    [Use TPM 2 crypot code rather than OpenSSL crypto functions]),
