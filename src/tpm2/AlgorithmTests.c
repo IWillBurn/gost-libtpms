@@ -225,9 +225,9 @@ static void TestSymmetricAlgorithm(const SYMMETRIC_TEST_VECTOR* test,  //
                                    TPM_ALG_ID                   mode   //
 )
 {
-    static BYTE     encrypted[MAX_SYM_BLOCK_SIZE * 2];
-    static BYTE     decrypted[MAX_SYM_BLOCK_SIZE * 2];
-    static TPM2B_IV iv;
+    BYTE     encrypted[MAX_SYM_BLOCK_SIZE * 4];
+    BYTE     decrypted[MAX_SYM_BLOCK_SIZE * 4];
+    TPM2B_IV iv;
 
     // libtpms added begin
     if (test->dataOut[mode - TPM_ALG_CTR] == NULL)
@@ -775,19 +775,12 @@ static TPM_RC TestGOST3410SignAndVerify(TPM_ALG_ID scheme, ALGORITHM_VECTOR* toT
 
     switch(scheme)
     {
-        case TPM_ALG_GOST3410_256:
+        case TPM_ALG_GOST3410:
             MemoryCopy2B(&testObject.sensitive.sensitive.ecc.b,
                 &c_testKeyGOST3410256_ds.b,
                 sizeof(testObject.sensitive.sensitive.ecc.t.buffer));
             LoadEccPoint(&testObject.publicArea.unique.ecc, &c_testKeyGOST3410256_QsX, &c_testKeyGOST3410256_QsY);
             testObject.publicArea.parameters.eccDetail.curveID = c_testCurveGOST3410256;
-            break;
-        case TPM_ALG_GOST3410_512:
-            MemoryCopy2B(&testObject.sensitive.sensitive.ecc.b,
-                &c_testKeyGOST3410512_ds.b,
-                sizeof(testObject.sensitive.sensitive.ecc.t.buffer));
-            LoadEccPoint(&testObject.publicArea.unique.ecc, &c_testKeyGOST3410512_QsX, &c_testKeyGOST3410512_QsY);
-            testObject.publicArea.parameters.eccDetail.curveID = c_testCurveGOST3410512;
             break;
         default:
             SELF_TEST_FAILURE;
@@ -864,8 +857,7 @@ static TPM_RC TestEcc(TPM_ALG_ID alg, ALGORITHM_VECTOR* toTest)
             break;
         
         // [GOST] CHANGES START
-        case TPM_ALG_GOST3410_256:
-        case TPM_ALG_GOST3410_512:
+        case TPM_ALG_GOST3410:
             result = TestGOST3410SignAndVerify(alg, toTest);
             break;
         // CHANGES END
@@ -1067,8 +1059,7 @@ TestAlgorithm(TPM_ALG_ID alg, ALGORITHM_VECTOR* toTest)
             case TPM_ALG_ECDH:
             case TPM_ALG_ECSCHNORR:
             // [GOST] CHANGES START
-            case TPM_ALG_GOST3410_256:
-            case TPM_ALG_GOST3410_512:
+            case TPM_ALG_GOST3410:
             // CHANGES END
                 //            case TPM_ALG_SM2:
                 if(doTest)

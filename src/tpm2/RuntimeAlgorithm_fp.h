@@ -43,7 +43,7 @@
 #define RUNTIME_ALGORITHM_H
 
 #define NUM_ENTRIES_ALGORITHM_PROPERTIES	(size_t)(TPM_ALG_LAST + 1)
-#define NUM_ENTRIES_ECC_ALGO_PROPERTIES         (size_t)(TPM_ECC_SM2_P256 + 1) // [GOST] TODO: FIX IT
+#define NUM_ENTRIES_ECC_ALGO_PROPERTIES         (size_t)(TPM_ECC_TC26_GOST3410_512_PARAM_SET_C + 1) // [GOST] covers full TC26 curve ID range 0x0050-0x0056
 
 struct RuntimeAlgorithm {
     /* array holding minimum key sizes for algorithms in algsWithKeySizes */

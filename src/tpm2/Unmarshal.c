@@ -1627,11 +1627,8 @@ TPMI_ALG_SIG_SCHEME_Unmarshal(TPMI_ALG_SIG_SCHEME *target, BYTE **buffer, INT32 
 #endif
 
 // [GOST] CHANGES START
-#if ALG_GOST3410_256
-	  case TPM_ALG_GOST3410_256:
-#endif
-#if ALG_GOST3410_512
-	  case TPM_ALG_GOST3410_512:
+#if ALG_GOST3410
+	  case TPM_ALG_GOST3410:
 #endif
 // CHANGES END
 
@@ -3662,18 +3659,7 @@ TPMS_SIG_SCHEME_SM2_Unmarshal(TPMS_SIG_SCHEME_SM2 *target, BYTE **buffer, INT32 
 
 // [GOST] CHANGES START
 TPM_RC
-TPMS_SIG_SCHEME_GOST3410_256_Unmarshal(TPMS_SIG_SCHEME_GOST3410_256 *target, BYTE **buffer, INT32 *size)
-{
-    TPM_RC rc = TPM_RC_SUCCESS;
-
-    if (rc == TPM_RC_SUCCESS) {
-	rc = TPMS_SCHEME_HASH_Unmarshal(target, buffer, size);
-    }
-    return rc;
-}
-
-TPM_RC
-TPMS_SIG_SCHEME_GOST3410_512_Unmarshal(TPMS_SIG_SCHEME_GOST3410_512 *target, BYTE **buffer, INT32 *size)
+TPMS_SIG_SCHEME_GOST3410_Unmarshal(TPMS_SIG_SCHEME_GOST3410 *target, BYTE **buffer, INT32 *size)
 {
     TPM_RC rc = TPM_RC_SUCCESS;
 
@@ -3728,14 +3714,9 @@ TPMU_SIG_SCHEME_Unmarshal(TPMU_SIG_SCHEME *target, BYTE **buffer, INT32 *size, U
 #endif
 
 // [GOST] CHANGES START
-#if ALG_GOST3410_256
-      case TPM_ALG_GOST3410_256:
-	rc = TPMS_SIG_SCHEME_GOST3410_256_Unmarshal(&target->gost3410_256, buffer, size);
-	break;
-#endif
-#if ALG_GOST3410_512
-      case TPM_ALG_GOST3410_512:
-	rc = TPMS_SIG_SCHEME_GOST3410_512_Unmarshal(&target->gost3410_512, buffer, size);
+#if ALG_GOST3410
+      case TPM_ALG_GOST3410:
+	rc = TPMS_SIG_SCHEME_GOST3410_Unmarshal(&target->gost3410, buffer, size);
 	break;
 #endif
 // CHANGES END
@@ -3969,11 +3950,8 @@ TPMI_ALG_ASYM_SCHEME_Unmarshal(TPMI_ALG_ASYM_SCHEME *target, BYTE **buffer, INT3
 #endif
 
 // [GOST] CHANGES START
-#if ALG_GOST3410_256
-	  case TPM_ALG_GOST3410_256:
-#endif
-#if ALG_GOST3410_512
-	  case TPM_ALG_GOST3410_512:
+#if ALG_GOST3410
+	  case TPM_ALG_GOST3410:
 #endif
 // CHANGES END
 
@@ -4058,14 +4036,9 @@ TPMU_ASYM_SCHEME_Unmarshal(TPMU_ASYM_SCHEME *target, BYTE **buffer, INT32 *size,
 #endif
 
 // [GOST] CHANGES START
-#if ALG_GOST3410_256
-      case TPM_ALG_GOST3410_256:
-	rc = TPMS_SIG_SCHEME_GOST3410_256_Unmarshal(&target->gost3410_256, buffer, size);
-	break;
-#endif
-#if ALG_GOST3410_512
-      case TPM_ALG_GOST3410_512:
-	rc = TPMS_SIG_SCHEME_GOST3410_512_Unmarshal(&target->gost3410_512, buffer, size);
+#if ALG_GOST3410
+      case TPM_ALG_GOST3410:
+	rc = TPMS_SIG_SCHEME_GOST3410_Unmarshal(&target->gost3410, buffer, size);
 	break;
 #endif
 // CHANGES END
@@ -4359,11 +4332,8 @@ TPMI_ALG_ECC_SCHEME_Unmarshal(TPMI_ALG_ECC_SCHEME *target, BYTE **buffer, INT32 
 #endif
 
 // [GOST] CHANGES START
-#if ALG_GOST3410_256
-	  case TPM_ALG_GOST3410_256:
-#endif
-#if ALG_GOST3410_512
-	  case TPM_ALG_GOST3410_512:
+#if ALG_GOST3410
+	  case TPM_ALG_GOST3410:
 #endif
 // CHANGES END
 
@@ -4533,18 +4503,7 @@ TPMS_SIGNATURE_ECSCHNORR_Unmarshal(TPMS_SIGNATURE_ECSCHNORR *target, BYTE **buff
 
 // [GOST] CHANGES START
 TPM_RC
-TPMS_SIGNATURE_GOST3410_256_Unmarshal(TPMS_SIGNATURE_GOST3410_256 *target, BYTE **buffer, INT32 *size)
-{
-    TPM_RC rc = TPM_RC_SUCCESS;
-
-    if (rc == TPM_RC_SUCCESS) {
-	rc = TPMS_SIGNATURE_ECC_Unmarshal(target, buffer, size);
-    }
-    return rc;
-}
-
-TPM_RC
-TPMS_SIGNATURE_GOST3410_512_Unmarshal(TPMS_SIGNATURE_GOST3410_512 *target, BYTE **buffer, INT32 *size)
+TPMS_SIGNATURE_GOST3410_Unmarshal(TPMS_SIGNATURE_GOST3410 *target, BYTE **buffer, INT32 *size)
 {
     TPM_RC rc = TPM_RC_SUCCESS;
 
@@ -4606,14 +4565,9 @@ TPMU_SIGNATURE_Unmarshal(TPMU_SIGNATURE *target, BYTE **buffer, INT32 *size, UIN
 #endif
 
 // [GOST] CHANGES START
-#if ALG_GOST3410_256
-      case TPM_ALG_GOST3410_256:
-	rc = TPMS_SIGNATURE_GOST3410_256_Unmarshal(&target->gost3410_256, buffer, size);
-	break;
-#endif
-#if ALG_GOST3410_512
-      case TPM_ALG_GOST3410_512:
-	rc = TPMS_SIGNATURE_GOST3410_512_Unmarshal(&target->gost3410_512, buffer, size);
+#if ALG_GOST3410
+      case TPM_ALG_GOST3410:
+	rc = TPMS_SIGNATURE_GOST3410_Unmarshal(&target->gost3410, buffer, size);
 	break;
 #endif
 // CHANGES END

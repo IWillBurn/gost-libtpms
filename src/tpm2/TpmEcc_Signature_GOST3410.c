@@ -8,7 +8,7 @@
 #  define USE_OPENSSL_FUNCTIONS_GOST3410 0
 #endif
 
-#if ALG_ECC && (ALG_GOST3410_256 || ALG_GOST3410_512)
+#if ALG_ECC && ALG_GOST3410
 
 #if !USE_OPENSSL_FUNCTIONS_GOST3410
 // =============================================================================
@@ -29,8 +29,8 @@ static void ReverseCopy(BYTE* dst, const BYTE* src, size_t n)
  *   if e == 0 => e = 1
  */
 static Crypt_Int* TpmEcc_AdjustGost3410Digest(Crypt_Int*          bnE,
-                                             const TPM2B_DIGEST* digest,
-                                             const Crypt_Int*    order)
+                                              const TPM2B_DIGEST* digest,
+                                              const Crypt_Int*    order)
 {
     int bitsInOrder = ExtMath_SizeInBits(order);
 
@@ -57,24 +57,13 @@ static Crypt_Int* TpmEcc_AdjustGost3410Digest(Crypt_Int*          bnE,
     return bnE;
 }
 
-#endif // !USE_OPENSSL_FUNCTIONS_GOST3410
-
-#endif // common
-
-// =============================================================================
-// 256-bit
-// =============================================================================
-#if ALG_ECC && ALG_GOST3410_256
-
-#if !USE_OPENSSL_FUNCTIONS_GOST3410
-
 TPM_RC
-TpmEcc_SignGost3410256(Crypt_Int*            bnR,
-                       Crypt_Int*            bnS,
-                       const Crypt_EccCurve* E,
-                       Crypt_Int*            bnD,
-                       const TPM2B_DIGEST*   digest,
-                       RAND_STATE*           rand)
+TpmEcc_SignGost3410(Crypt_Int*            bnR,
+                    Crypt_Int*            bnS,
+                    const Crypt_EccCurve* E,
+                    Crypt_Int*            bnD,
+                    const TPM2B_DIGEST*   digest,
+                    RAND_STATE*           rand)
 {
     CRYPT_ECC_NUM(bnK);
     CRYPT_INT_VAR(bnE, MAX_ECC_KEY_BITS);
@@ -132,11 +121,11 @@ TpmEcc_SignGost3410256(Crypt_Int*            bnR,
 }
 
 TPM_RC
-TpmEcc_ValidateSignatureGost3410256(Crypt_Int*            bnR,
-                                    Crypt_Int*            bnS,
-                                    const Crypt_EccCurve* E,
-                                    const Crypt_Point*    ecQ,
-                                    const TPM2B_DIGEST*   digest)
+TpmEcc_ValidateSignatureGost3410(Crypt_Int*            bnR,
+                                 Crypt_Int*            bnS,
+                                 const Crypt_EccCurve* E,
+                                 const Crypt_Point*    ecQ,
+                                 const TPM2B_DIGEST*   digest)
 {
     CRYPT_INT_VAR(bnE, MAX_ECC_KEY_BITS);
     CRYPT_ECC_NUM(bnV);
@@ -223,12 +212,12 @@ static int TpmEcc_GostCurveNidFromCurve(const Crypt_EccCurve* E)
 }
 
 TPM_RC
-TpmEcc_SignGost3410256(Crypt_Int*            bnR,
-                       Crypt_Int*            bnS,
-                       const Crypt_EccCurve* E,
-                       Crypt_Int*            bnD,
-                       const TPM2B_DIGEST*   digest,
-                       RAND_STATE*           rand LIBTPMS_ATTR_UNUSED)
+TpmEcc_SignGost3410(Crypt_Int*            bnR,
+                    Crypt_Int*            bnS,
+                    const Crypt_EccCurve* E,
+                    Crypt_Int*            bnD,
+                    const TPM2B_DIGEST*   digest,
+                    RAND_STATE*           rand LIBTPMS_ATTR_UNUSED)
 {
     TPM_RC       retVal = TPM_RC_FAILURE;
     EC_KEY*      eckey  = NULL;
@@ -276,11 +265,11 @@ Exit:
 }
 
 TPM_RC
-TpmEcc_ValidateSignatureGost3410256(Crypt_Int*            bnR,
-                                    Crypt_Int*            bnS,
-                                    const Crypt_EccCurve* E,
-                                    const Crypt_Point*    ecQ,
-                                    const TPM2B_DIGEST*   digest)
+TpmEcc_ValidateSignatureGost3410(Crypt_Int*            bnR,
+                                 Crypt_Int*            bnS,
+                                 const Crypt_EccCurve* E,
+                                 const Crypt_Point*    ecQ,
+                                 const TPM2B_DIGEST*   digest)
 {
     TPM_RC     retVal = TPM_RC_FAILURE;
     int        rc;
@@ -338,248 +327,4 @@ Exit:
 
 #endif // !USE_OPENSSL_FUNCTIONS_GOST3410
 
-#endif // ALG_ECC && ALG_GOST3410_256
-
-// =============================================================================
-// 512-bit
-// =============================================================================
-#if ALG_ECC && ALG_GOST3410_512
-
-#if !USE_OPENSSL_FUNCTIONS_GOST3410
-
-TPM_RC
-TpmEcc_SignGost3410512(Crypt_Int*            bnR,
-                       Crypt_Int*            bnS,
-                       const Crypt_EccCurve* E,
-                       Crypt_Int*            bnD,
-                       const TPM2B_DIGEST*   digest,
-                       RAND_STATE*           rand)
-{
-    CRYPT_ECC_NUM(bnK);
-    CRYPT_INT_VAR(bnE, MAX_ECC_KEY_BITS);
-    CRYPT_POINT_VAR(ecC);
-    CRYPT_ECC_NUM(bnX);
-    CRYPT_ECC_NUM(bnTmp1);
-    CRYPT_ECC_NUM(bnTmp2);
-
-    const Crypt_Int* order = ExtEcc_CurveGetOrder(ExtEcc_CurveGetCurveId(E));
-    INT32            tries = 10;
-
-    pAssert(digest != NULL);
-
-    TpmEcc_AdjustGost3410Digest(bnE, digest, order);
-
-    for(;;)
-    {
-        BOOL ok = FALSE;
-
-        for(; tries > 0; tries--)
-        {
-            if(!TpmEcc_GenerateKeyPair(bnK, ecC, E, rand))
-                continue;
-
-            ExtMath_Copy(bnX, ExtEcc_PointX(ecC));
-            ExtMath_Mod(bnX, order);
-            if(ExtMath_IsZero(bnX))
-                continue;
-
-            ExtMath_Copy(bnR, bnX);
-            ok = TRUE;
-            break;
-        }
-        if(!ok)
-            return TPM_RC_FAILURE;
-
-        ExtMath_ModMult(bnTmp1, bnR, bnD, order);
-        ExtMath_ModMult(bnTmp2, bnK, bnE, order);
-        ExtMath_Add(bnS, bnTmp1, bnTmp2);
-        ExtMath_Mod(bnS, order);
-
-        if(!ExtMath_IsZero(bnS))
-            break;
-
-        tries = 10;
-    }
-
-    return TPM_RC_SUCCESS;
-}
-
-TPM_RC
-TpmEcc_ValidateSignatureGost3410512(Crypt_Int*            bnR,
-                                    Crypt_Int*            bnS,
-                                    const Crypt_EccCurve* E,
-                                    const Crypt_Point*    ecQ,
-                                    const TPM2B_DIGEST*   digest)
-{
-    CRYPT_INT_VAR(bnE, MAX_ECC_KEY_BITS);
-    CRYPT_ECC_NUM(bnV);
-    CRYPT_ECC_NUM(bnZ1);
-    CRYPT_ECC_NUM(bnZ2);
-    CRYPT_ECC_NUM(bnTmp);
-    CRYPT_POINT_VAR(ecC);
-    CRYPT_ECC_NUM(bnX);
-    CRYPT_ECC_NUM(bnRcalc);
-
-    const Crypt_Int* order = ExtEcc_CurveGetOrder(ExtEcc_CurveGetCurveId(E));
-
-    if(ExtMath_IsZero(bnR) || ExtMath_IsZero(bnS))
-        return TPM_RC_SIGNATURE;
-    if(ExtMath_UnsignedCmp(bnR, order) >= 0 || ExtMath_UnsignedCmp(bnS, order) >= 0)
-        return TPM_RC_SIGNATURE;
-
-    TpmEcc_AdjustGost3410Digest(bnE, digest, order);
-
-    if(!ExtMath_ModInverse(bnV, bnE, order))
-        return TPM_RC_SIGNATURE;
-
-    ExtMath_ModMult(bnZ1, bnS, bnV, order);
-
-    ExtMath_Subtract(bnTmp, order, bnR);
-    ExtMath_ModMult(bnZ2, bnTmp, bnV, order);
-
-    if(TpmEcc_PointMult(ecC,
-                        ExtEcc_CurveGetG(ExtEcc_CurveGetCurveId(E)),
-                        bnZ1,
-                        ecQ,
-                        bnZ2,
-                        E)
-       != TPM_RC_SUCCESS)
-        return TPM_RC_SIGNATURE;
-
-    ExtMath_Copy(bnX, ExtEcc_PointX(ecC));
-    ExtMath_Copy(bnRcalc, bnX);
-    ExtMath_Mod(bnRcalc, order);
-
-    if(ExtMath_UnsignedCmp(bnRcalc, bnR) != 0)
-        return TPM_RC_SIGNATURE;
-
-    return TPM_RC_SUCCESS;
-}
-
-#else // USE_OPENSSL_FUNCTIONS_GOST3410
-// =============================================================================
-// gost-engine implementation
-// =============================================================================
-#include <openssl/ec.h>
-#include <openssl/ecdsa.h>
-#include <openssl/bn.h>
-#include <gost-engine/gost_lcl.h>
-
-static int TpmEcc_GostCurveNidFromCurve(const Crypt_EccCurve* E);
-
-TPM_RC
-TpmEcc_SignGost3410512(Crypt_Int*            bnR,
-                       Crypt_Int*            bnS,
-                       const Crypt_EccCurve* E,
-                       Crypt_Int*            bnD,
-                       const TPM2B_DIGEST*   digest,
-                       RAND_STATE*           rand LIBTPMS_ATTR_UNUSED)
-{
-    TPM_RC       retVal = TPM_RC_FAILURE;
-    EC_KEY*      eckey  = NULL;
-    ECDSA_SIG*   sig    = NULL;
-    const BIGNUM *r = NULL, *s = NULL;
-    BIGNUM*      d      = BN_new();
-    int          nid;
-
-    if(!d)
-        return TPM_RC_MEMORY;
-
-    d = BigInitialized(d, (bigConst)bnD);
-    eckey = EC_KEY_new();
-    if(d == NULL || eckey == NULL)
-        goto Exit;
-
-    nid = TpmEcc_GostCurveNidFromCurve(E);
-    if(nid == NID_undef)
-        goto Exit;
-
-    if(fill_GOST_EC_params(eckey, nid) != 1)
-        goto Exit;
-
-    if(EC_KEY_set_private_key(eckey, d) != 1)
-        goto Exit;
-
-    sig = gost_ec_sign(digest->b.buffer, digest->b.size, eckey);
-    if(sig == NULL)
-        goto Exit;
-
-    ECDSA_SIG_get0(sig, &r, &s);
-    if(r == NULL || s == NULL)
-        goto Exit;
-
-    OsslToTpmBn((bigNum)bnR, r);
-    OsslToTpmBn((bigNum)bnS, s);
-
-    retVal = TPM_RC_SUCCESS;
-
-Exit:
-    BN_clear_free(d);
-    EC_KEY_free(eckey);
-    ECDSA_SIG_free(sig);
-    return retVal;
-}
-
-TPM_RC
-TpmEcc_ValidateSignatureGost3410512(Crypt_Int*            bnR,
-                                    Crypt_Int*            bnS,
-                                    const Crypt_EccCurve* E,
-                                    const Crypt_Point*    ecQ,
-                                    const TPM2B_DIGEST*   digest)
-{
-    TPM_RC     retVal = TPM_RC_FAILURE;
-    int        rc;
-    ECDSA_SIG* sig  = NULL;
-    EC_KEY*    eckey = NULL;
-    BIGNUM*    r = BN_new();
-    BIGNUM*    s = BN_new();
-    EC_POINT*  q = NULL;
-    int        nid;
-
-    if(!r || !s)
-        goto Exit;
-
-    r = BigInitialized(r, (bigConst)bnR);
-    s = BigInitialized(s, (bigConst)bnS);
-    q = EcPointInitialized((bn_point_t*)ecQ, E);
-
-    sig  = ECDSA_SIG_new();
-    eckey = EC_KEY_new();
-
-    if(r == NULL || s == NULL || q == NULL || sig == NULL || eckey == NULL)
-        goto Exit;
-
-    nid = TpmEcc_GostCurveNidFromCurve(E);
-    if(nid == NID_undef)
-        goto Exit;
-
-    if(fill_GOST_EC_params(eckey, nid) != 1)
-        goto Exit;
-
-    if(EC_KEY_set_public_key(eckey, q) != 1)
-        goto Exit;
-
-    if(ECDSA_SIG_set0(sig, r, s) != 1)
-        goto Exit;
-
-    r = NULL;
-    s = NULL;
-
-    rc = gost_ec_verify(digest->b.buffer, digest->b.size, sig, eckey);
-    if(rc == 1)
-        retVal = TPM_RC_SUCCESS;
-    else
-        retVal = TPM_RC_SIGNATURE;
-
-Exit:
-    EC_KEY_free(eckey);
-    ECDSA_SIG_free(sig);
-    EC_POINT_clear_free(q);
-    BN_clear_free(r);
-    BN_clear_free(s);
-    return retVal;
-}
-
-#endif // !USE_OPENSSL_FUNCTIONS_GOST3410
-
-#endif // ALG_ECC && ALG_GOST3410_512
+#endif // ALG_ECC && ALG_GOST3410

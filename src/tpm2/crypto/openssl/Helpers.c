@@ -127,7 +127,7 @@ OpenSSLCryptGenerateKeyDes(
 }
 #endif // ALG_TDES
 
-#define __NUM_ALGS      4 /* AES, TDES, Camellia, SM4 */
+#define __NUM_ALGS      6 /* AES, TDES, Camellia, SM4, Magma, Grasshopper */ // [GOST] Add Magma and Grasshopper
 #define __NUM_MODES     5 /* CTR, OFB, CBC, CFB, ECB */
 #define __NUM_KEYSIZES  3 /* 128, 192, 256 */
 
@@ -343,17 +343,13 @@ GetEVPCipher(TPM_ALG_ID    algorithm,       // IN
 // [GOST] CHANGES START
 #if ALG_MAGMA
     case TPM_ALG_MAGMA:
-        algIdx = 0;
+        algIdx = 4;
         *keyToUseLen = keySizeInBytes;
 
         switch (mode) {
 #if ALG_CTR
         case TPM_ALG_CTR:
-            if (i < 2) {
-                evpfn = NULL;
-                break;
-            }
-            evpfn = magma_ctr_evp;
+            evpfn = (evpfunc[]){NULL, NULL, magma_ctr_evp}[i];
             break;
 #endif
 #if ALG_OFB
@@ -363,11 +359,7 @@ GetEVPCipher(TPM_ALG_ID    algorithm,       // IN
 #endif
 #if ALG_CBC
         case TPM_ALG_CBC:
-            if (i < 2) {
-                evpfn = NULL;
-                break;
-            }
-            evpfn = magma_cbc_evp;
+            evpfn = (evpfunc[]){NULL, NULL, magma_cbc_evp}[i];
             break;
 #endif
 #if ALG_CFB
@@ -377,11 +369,7 @@ GetEVPCipher(TPM_ALG_ID    algorithm,       // IN
 #endif
 #if ALG_ECB
         case TPM_ALG_ECB:
-            if (i < 2) {
-                evpfn = NULL;
-                break;
-            }
-            evpfn = magma_ecb_evp;
+            evpfn = (evpfunc[]){NULL, NULL, magma_ecb_evp}[i];
             break;
 #endif
         }
@@ -390,53 +378,33 @@ GetEVPCipher(TPM_ALG_ID    algorithm,       // IN
 
 #if ALG_GRASSHOPPER
     case TPM_ALG_GRASSHOPPER:
-        algIdx = 0;
+        algIdx = 5;
         *keyToUseLen = keySizeInBytes;
 
         switch (mode) {
 #if ALG_CTR
         case TPM_ALG_CTR:
-            if (i < 2) {
-                evpfn = NULL;
-                break;
-            }
-            evpfn = grasshopper_ctr_evp;
+            evpfn = (evpfunc[]){NULL, NULL, grasshopper_ctr_evp}[i];
             break;
 #endif
 #if ALG_OFB
         case TPM_ALG_OFB:
-            if (i < 2) {
-                evpfn = NULL;
-                break;
-            }
-            evpfn = grasshopper_ofb_evp;
+            evpfn = (evpfunc[]){NULL, NULL, grasshopper_ofb_evp}[i];
             break;
 #endif
 #if ALG_CBC
         case TPM_ALG_CBC:
-            if (i < 2) {
-                evpfn = NULL;
-                break;
-            }
-            evpfn = grasshopper_cbc_evp;
+            evpfn = (evpfunc[]){NULL, NULL, grasshopper_cbc_evp}[i];
             break;
 #endif
 #if ALG_CFB
         case TPM_ALG_CFB:
-            if (i < 2) {
-                evpfn = NULL;
-                break;
-            }
-            evpfn = grasshopper_cfb_evp;
+            evpfn = (evpfunc[]){NULL, NULL, grasshopper_cfb_evp}[i];
             break;
 #endif
 #if ALG_ECB
         case TPM_ALG_ECB:
-            if (i < 2) {
-                evpfn = NULL;
-                break;
-            }
-            evpfn = grasshopper_ecb_evp;
+            evpfn = (evpfunc[]){NULL, NULL, grasshopper_ecb_evp}[i];
             break;
 #endif
         }
@@ -466,8 +434,18 @@ TPM_RC DoEVPGetIV(
         OSSL_PARAM_octet_ptr(OSSL_CIPHER_PARAM_UPDATED_IV, &iv, iv_len),
         OSSL_PARAM_END
     };
-    if (EVP_CIPHER_CTX_get_params(ctx, params) != 1)
-        return TPM_RC_FAILURE;
+    if (EVP_CIPHER_CTX_get_params(ctx, params) != 1) {
+        /* Fallback for legacy ciphers (EVP_CIPHER_meth_*-based, e.g. GOST):
+         * OSSL_CIPHER_PARAM_UPDATED_IV is not supported by the compatibility
+         * layer, so read ctx->iv directly via the deprecated accessor. */
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+        const unsigned char *c_iv = EVP_CIPHER_CTX_iv(ctx);
+#pragma GCC diagnostic pop
+        if (!c_iv)
+            return TPM_RC_FAILURE;
+        memcpy(iv, c_iv, iv_len);
+    }
 #else
     const unsigned char *c_iv;
 

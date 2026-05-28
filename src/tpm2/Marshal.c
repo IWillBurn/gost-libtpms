@@ -1521,14 +1521,7 @@ TPMS_SIG_SCHEME_ECDAA_Marshal(TPMS_SIG_SCHEME_ECDAA *source, BYTE **buffer, INT3
 
 // [GOST] CHANGES START
 UINT16
-TPMS_SIG_SCHEME_GOST3410_256_Marshal(TPMS_SIG_SCHEME_GOST3410_256 *source, BYTE **buffer, INT32 *size)
-{
-    UINT16 written = 0;
-    written += TPMS_SCHEME_HASH_Marshal(source, buffer, size);
-    return written;
-}
-UINT16
-TPMS_SIG_SCHEME_GOST3410_512_Marshal(TPMS_SIG_SCHEME_GOST3410_512 *source, BYTE **buffer, INT32 *size)
+TPMS_SIG_SCHEME_GOST3410_Marshal(TPMS_SIG_SCHEME_GOST3410 *source, BYTE **buffer, INT32 *size)
 {
     UINT16 written = 0;
     written += TPMS_SCHEME_HASH_Marshal(source, buffer, size);
@@ -1730,14 +1723,9 @@ TPMU_ASYM_SCHEME_Marshal(TPMU_ASYM_SCHEME  *source, BYTE **buffer, INT32 *size, 
 #endif
 
 // [GOST] CHANGES START
-#if ALG_GOST3410_256
-      case TPM_ALG_GOST3410_256:
-	written += TPMS_SIG_SCHEME_GOST3410_256_Marshal(&source->gost3410_256, buffer, size);
-	break;
-#endif
-#if ALG_GOST3410_512
-      case TPM_ALG_GOST3410_512:
-	written += TPMS_SIG_SCHEME_GOST3410_512_Marshal(&source->gost3410_512, buffer, size);
+#if ALG_GOST3410
+      case TPM_ALG_GOST3410:
+	written += TPMS_SIG_SCHEME_GOST3410_Marshal(&source->gost3410, buffer, size);
 	break;
 #endif
 // CHANGES END
@@ -1986,15 +1974,7 @@ TPMS_SIGNATURE_ECSCHNORR_Marshal(TPMS_SIGNATURE_ECSCHNORR *source, BYTE **buffer
 
 // [GOST] CHANGES START
 UINT16
-TPMS_SIGNATURE_GOST3410_256_Marshal(TPMS_SIGNATURE_GOST3410_256 *source, BYTE **buffer, INT32 *size)
-{
-    UINT16 written = 0;
-    written += TPMS_SIGNATURE_ECC_Marshal(source, buffer, size);
-    return written;
-}
-
-UINT16
-TPMS_SIGNATURE_GOST3410_512_Marshal(TPMS_SIGNATURE_GOST3410_512 *source, BYTE **buffer, INT32 *size)
+TPMS_SIGNATURE_GOST3410_Marshal(TPMS_SIGNATURE_GOST3410 *source, BYTE **buffer, INT32 *size)
 {
     UINT16 written = 0;
     written += TPMS_SIGNATURE_ECC_Marshal(source, buffer, size);
@@ -2042,15 +2022,9 @@ TPMU_SIGNATURE_Marshal(TPMU_SIGNATURE *source, BYTE **buffer, INT32 *size, UINT3
 #endif
 
 // [GOST] CHANGES START
-#if ALG_GOST3410_256
-      case TPM_ALG_GOST3410_256:
-	written += TPMS_SIGNATURE_GOST3410_256_Marshal(&source->gost3410_256, buffer, size);
-	break;
-#endif
-
-#if ALG_GOST3410_512
-      case TPM_ALG_GOST3410_512:
-	written += TPMS_SIGNATURE_GOST3410_512_Marshal(&source->gost3410_512, buffer, size);
+#if ALG_GOST3410
+      case TPM_ALG_GOST3410:
+	written += TPMS_SIGNATURE_GOST3410_Marshal(&source->gost3410, buffer, size);
 	break;
 #endif
 // CHANGES END

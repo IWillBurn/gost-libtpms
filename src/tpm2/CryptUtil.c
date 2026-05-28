@@ -1277,11 +1277,8 @@ CryptGetSignHashAlg(TPMT_SIGNATURE* auth  // IN: signature
 #  endif
 
 // [GOST] CHANGES START
-#  if ALG_GOST3410_256
-        case TPM_ALG_GOST3410_256:
-#  endif
-#  if ALG_GOST3410_512
-        case TPM_ALG_GOST3410_512:
+#  if ALG_GOST3410
+        case TPM_ALG_GOST3410:
 #  endif
 // CHANGES END
 
@@ -1373,11 +1370,8 @@ BOOL CryptIsAsymSignScheme(TPMI_ALG_PUBLIC      publicType,  // IN: Type of the 
 #  endif
 
 // [GOST] CHANGES START
-#  if ALG_GOST3410_256
-        case TPM_ALG_GOST3410_256:
-#  endif
-#  if ALG_GOST3410_512
-        case TPM_ALG_GOST3410_512:
+#  if ALG_GOST3410
+                case TPM_ALG_GOST3410:
 #  endif
 // CHANGES END
                     break;

@@ -184,7 +184,7 @@ static const struct RuntimeProfileDesc {
 			     "kdf1-sp800-56a,kdf2,kdf1-sp800-108,ecc,ecc-min-size=192,ecc-nist,"
 			     "ecc-bn,ecc-sm2-p256,symcipher,camellia,camellia-min-size=128,cmac,"
 			     "ctr,ofb,cbc,cfb,ecb,"
-                 "gost3411-256,gost3411-512,magma,grasshopper,gost3410-256,gost3410-512,ecc-tc26-gost3410",
+                 "gost3411-256,gost3411-512,magma,grasshopper,gost3410,ecc-tc26-gost3410",
 	.stateFormatLevel  = 7,
 	.description = "The profile enables the commands and algorithms that were "
 		       "enabled in libtpms v0.9 and gost algorithms."
@@ -327,8 +327,8 @@ RuntimeProfileDedupStrItems(char *input)
             dup = strstr(ncomma + 1, pos);
             if (dup) {
                 /* ensure 'dup' is a prefix of 'pos' with either ',' or '\0' before it */
-                if (((dup[-1] == ',' || dup[-1] == 0) && dup[slen] == exp) ||
-                     (dup[slen] == 0) /* last item in list */) {
+                if ((dup[-1] == ',' || dup[-1] == 0) &&
+                    (dup[slen] == exp || dup[slen] == 0)) {
                     memmove(pos, comma + 1, strlen(comma + 1) + 1);
                     /* keep pos as-is */
                     found = true;

@@ -199,8 +199,7 @@
 #define     ALG_EDDSA_PH                    (NO  * ALG_ECC)
 
 // [GOST] CHANGES START
-#define ALG_GOST3410_256                    (YES * ALG_ECC)
-#define ALG_GOST3410_512                    (YES * ALG_ECC)
+#define ALG_GOST3410                        (YES * ALG_ECC)
 // CHANGES END
 
 #define     ECC_NIST_P192                   (YES * ALG_ECC)

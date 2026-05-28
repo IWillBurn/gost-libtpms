@@ -210,7 +210,7 @@ const TPM2B_EC_TEST c_TestEcSchnorr_s = {
 
 // [GOST] CHANGES BEGIN
 
-const TPM_ECC_CURVE c_testCurveGOST3410256 = 0x0006;
+const TPM_ECC_CURVE c_testCurveGOST3410256 = TPM_ECC_TC26_GOST3410_256_PARAM_SET_A;
 
 const TPM2B_EC_TEST c_testKeyGOST3410256_ds = {
     {32, {
@@ -250,7 +250,7 @@ const TPM2B_TEST_VALUE c_testKeyGOST3410256Value = {
 
 
 
-const TPM_ECC_CURVE c_testCurveGOST3410512 = 0x000A;
+const TPM_ECC_CURVE c_testCurveGOST3410512 = TPM_ECC_TC26_GOST3410_512_PARAM_SET_A;
 
 const TPM2B_EC_TEST c_testKeyGOST3410512_ds = {
     {64, {

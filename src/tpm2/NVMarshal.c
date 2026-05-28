@@ -4255,8 +4255,7 @@ static const struct _entry {
     { COMPILE_CONSTANT(ALG_ECMQV, LE) },
 
 // [GOST] CHANGES START
-    { COMPILE_CONSTANT(ALG_GOST3410_256, EQ) },
-    { COMPILE_CONSTANT(ALG_GOST3410_512, EQ) },
+    { COMPILE_CONSTANT(ALG_GOST3410, EQ) },
 // CHANGES END
 
     { COMPILE_CONSTANT(ALG_SYMCIPHER, EQ) },
@@ -4479,7 +4478,7 @@ PACompileConstants_Unmarshal(BYTE **buffer, INT32 *size)
             break;
         case 3:
             /* PA_COMPILE_CONSTANTS_VERSION 3 had 104 entries */
-            exp_array_size = 133; // [GOST] +6 alg, +7 curve
+            exp_array_size = 132; // [GOST] +5 alg, +7 curve
             break;
         default:
             /* we don't support anything newer - no downgrade */

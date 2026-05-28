@@ -138,14 +138,9 @@ LIB_EXPORT TPM_RC CryptEccSign(TPMT_SIGNATURE* signature,  // OUT: signature
 #  endif
 
 // [GOST] CHANGES START
-#  if ALG_GOST3410_256
-        case TPM_ALG_GOST3410_256:
-            retVal = TpmEcc_SignGost3410256(bnR, bnS, E, bnD, digest, rand);
-            break;
-#  endif
-#  if ALG_GOST3410_512
-        case TPM_ALG_GOST3410_512:
-            retVal = TpmEcc_SignGost3410512(bnR, bnS, E, bnD, digest, rand);
+#  if ALG_GOST3410
+        case TPM_ALG_GOST3410:
+            retVal = TpmEcc_SignGost3410(bnR, bnS, E, bnD, digest, rand);
             break;
 #  endif
 // CHANGES END
@@ -207,11 +202,8 @@ LIB_EXPORT TPM_RC CryptEccValidateSignature(
 #  endif
 
 // [GOST] CHANGES START
-#  if ALG_GOST3410_256
-        case TPM_ALG_GOST3410_256:
-#  endif
-#  if ALG_GOST3410_512
-        case TPM_ALG_GOST3410_512:
+#  if ALG_GOST3410
+        case TPM_ALG_GOST3410:
 #  endif
 // CHANGES END
 
@@ -252,14 +244,9 @@ LIB_EXPORT TPM_RC CryptEccValidateSignature(
 #  endif
 
 // [GOST] CHANGES START
-#  if ALG_GOST3410_256
-        case TPM_ALG_GOST3410_256:
-            retVal = TpmEcc_ValidateSignatureGost3410256(bnR, bnS, E, ecQ, digest);
-            break;
-#  endif
-#  if ALG_GOST3410_512
-        case TPM_ALG_GOST3410_512:
-            retVal = TpmEcc_ValidateSignatureGost3410512(bnR, bnS, E, ecQ, digest);
+#  if ALG_GOST3410
+        case TPM_ALG_GOST3410:
+            retVal = TpmEcc_ValidateSignatureGost3410(bnR, bnS, E, ecQ, digest);
             break;
 #  endif
 // CHANGES END
